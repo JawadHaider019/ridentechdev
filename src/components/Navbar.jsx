@@ -314,14 +314,14 @@ const Navbar = () => {
       title: "Industries",
       href: "/industries",
       dropdown: [
-        { title: "Healthcare & Life Sciences", href: "/industries/healthcare" },
-        { title: "Finance & Legal", href: "/industries/finance" },
-        { title: "Retail & E-Commerce", href: "/industries/retail" },
-        { title: "Logistics & Supply Chain", href: "/industries/logistics" },
-        { title: "Education & EdTech", href: "/industries/education" },
-        { title: "Real Estate & Construction", href: "/industries/real-estate" },
-        { title: "Hospitality & Tourism", href: "/industries/hospitality" },
-        { title: "Non-Profit & Government", href: "/industries/nonprofit" }
+        { title: "Healthcare & Life Sciences", href: "/industries/healthcare-life-sciences" },
+        { title: "Finance & Legal", href: "/industries/finance-legal" },
+        { title: "Retail & E-Commerce", href: "/industries/retail-ecommerce" },
+        { title: "Logistics & Supply Chain", href: "/industries/logistics-supply-chain" },
+        { title: "Education & EdTech", href: "/industries/education-edtech" },
+        { title: "Real Estate & Construction", href: "/industries/real-estate-construction" },
+        { title: "Hospitality & Tourism", href: "/industries/hospitality-tourism" },
+        { title: "Non-Profit & Government", href: "/industries/non-profit-government" }
       ]
     },
     {
@@ -376,7 +376,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu - Only visible on large screens (lg) */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-1">
+          <div className="hidden lg:flex lg:items-center lg:space-x-1 gap-5">
             {navItems.map((item, index) => (
               <div
                 key={item.title}
@@ -391,13 +391,13 @@ const Navbar = () => {
                   <div className="flex items-center">
                     <Link
                       href={item.href}
-                      className="px-4 py-2 text-sm font-medium relative group font-manrope text-gray-600 hover:text-gray-900"
+                      className=" py-2 text-sm font-medium relative group font-manrope text-gray-600 hover:text-gray-900"
                       onClick={() => handleDropdownLinkClick()}
                     >
                       {item.title}
                     </Link>
                     <button
-                      className="p-2"
+                      className="py-2"
                       onMouseEnter={() => handleNavItemEnter(item.title)}
                     >
                       <ChevronDown
@@ -416,7 +416,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     href={item.href}
-                    className="relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 group inline-block font-manrope"
+                    className="relative px-0 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 group inline-block font-manrope"
                     onMouseEnter={() => {
                       if (window.innerWidth >= 1024) {
                         handleUnderlineHover(`${item.title}-desktop`, true);
