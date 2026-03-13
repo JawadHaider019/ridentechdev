@@ -31,28 +31,37 @@ export default function Blog() {
   const [isTablet, setIsTablet] = useState(false);
   const recentPosts = [...blogPosts].sort((a, b) => b.id - a.id).slice(0, 6);
 
+  const [mounted, setMounted] = useState(false);
+  const pinContainerRef = useRef(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Check screen size
   useEffect(() => {
+    if (!mounted) return;
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
       setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
     };
-    
+
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
-  }, []);
+  }, [mounted]);
 
   // Calculate scroll width for all devices
   useEffect(() => {
+    if (!mounted) return;
     const updateScrollLength = () => {
       if (!trackRef.current || !sectionRef.current) return;
 
       const trackWidth = trackRef.current.scrollWidth;
-      const containerWidth = isMobile || isTablet 
+      const containerWidth = isMobile || isTablet
         ? window.innerWidth - 48
-        : stickyRef.current 
-          ? sectionRef.current.offsetWidth - stickyRef.current.offsetWidth 
+        : stickyRef.current
+          ? sectionRef.current.offsetWidth - stickyRef.current.offsetWidth
           : sectionRef.current.offsetWidth;
 
       setScrollLength(trackWidth - containerWidth + (isMobile ? 40 : 60));
@@ -62,25 +71,25 @@ export default function Blog() {
     updateScrollLength();
     window.addEventListener("resize", updateScrollLength);
     return () => window.removeEventListener("resize", updateScrollLength);
-  }, [isMobile, isTablet]);
+  }, [isMobile, isTablet, mounted]);
 
   // Handle side button navigation
   const scrollTo = (direction) => {
     if (!trackRef.current || !scrollContainerRef.current) return;
-    
+
     const cardWidth = isMobile ? 280 : 300;
     const gap = 16; // 4 * 4 = 16px
     const scrollAmount = cardWidth + gap;
-    
+
     let newPosition;
     if (direction === 'prev') {
       newPosition = Math.min(currentPosition + scrollAmount, 0);
     } else {
       newPosition = Math.max(currentPosition - scrollAmount, -scrollLength);
     }
-    
+
     setCurrentPosition(newPosition);
-    
+
     gsap.to(trackRef.current, {
       x: newPosition,
       duration: 0.5,
@@ -90,6 +99,7 @@ export default function Blog() {
 
   // GSAP animations
   useEffect(() => {
+    if (!mounted) return;
     const ctx = gsap.context(() => {
       if (!sectionRef.current || !trackRef.current) return;
 
@@ -106,7 +116,7 @@ export default function Blog() {
 
       // Title and content animations
       const elementsToAnimate = [badgeRef.current, titleRef.current, textRef.current];
-      
+
       gsap.from(elementsToAnimate, {
         y: isMobile ? 20 : 60,
         opacity: 0,
@@ -118,16 +128,6 @@ export default function Blog() {
           start: "top 80%",
           toggleActions: "play none none none"
         }
-      });
-
-      // Continuous floating animation for badge
-      gsap.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        delay: 1
       });
 
       // Animate stats separately if they exist
@@ -148,18 +148,19 @@ export default function Blog() {
 
       // Desktop horizontal scroll animation
       if (!isMobile && !isTablet && scrollLength > 0) {
-        gsap.to(trackRef.current, {
-          x: () => -scrollLength,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: () => `+=${scrollLength + 200}`,
-            scrub: 1.2,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-          }
+        ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: "top top",
+          end: () => `+=${scrollLength + window.innerHeight}`, // Use window height for better completion feel
+          scrub: 1,
+          pin: true, // Pin the whole section
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          animation: gsap.to(trackRef.current, {
+            x: () => -scrollLength,
+            ease: "none",
+          })
         });
       }
 
@@ -167,7 +168,7 @@ export default function Blog() {
       const cards = trackRef.current.children;
       Array.from(cards).forEach((card, index) => {
         gsap.fromTo(card,
-          { 
+          {
             opacity: 0,
             scale: isMobile ? 0.95 : 0.9,
             x: isMobile ? 30 : 100
@@ -198,7 +199,7 @@ export default function Blog() {
             maxX: 0
           },
           inertia: true,
-          onDrag: function() {
+          onDrag: function () {
             setCurrentPosition(this.x);
           }
         });
@@ -206,162 +207,150 @@ export default function Blog() {
 
     }, sectionRef);
 
-    return () => ctx.revert();
-  }, [scrollLength, isMobile, isTablet]);
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === sectionRef.current || t.pin === pinContainerRef.current) t.kill(true);
+      });
+    };
+  }, [scrollLength, isMobile, isTablet, mounted]);
+
+  if (!mounted) return (
+    <section
+      ref={sectionRef}
+      className={`w-full ${isMobile || isTablet ? 'py-16' : 'h-[120vh]'} bg-gradient-to-br from-white to-gray-50 relative overflow-hidden`}
+    />
+  );
 
   return (
     <section
       ref={sectionRef}
-      className={`w-full ${isMobile || isTablet ? 'py-16' : 'h-[120vh]'} bg-gradient-to-br from-white to-gray-50 relative overflow-hidden`}
+      className={`w-full ${isMobile || isTablet ? 'py-16' : 'min-h-screen'} bg-gradient-to-br from-white to-gray-50 relative overflow-hidden`}
     >
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-40 right-0 w-96 h-96 bg-gray-200 rounded-full filter blur-3xl opacity-20"></div>
-        <div className="absolute bottom-40 left-1/3 w-72 h-72 bg-gray-200 rounded-full filter blur-3xl opacity-20"></div>
-      </div>
+      <div ref={pinContainerRef} className="w-full h-full">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-40 right-0 w-96 h-96 bg-gray-200 rounded-full filter blur-3xl opacity-20"></div>
+          <div className="absolute bottom-40 left-1/3 w-72 h-72 bg-gray-200 rounded-full filter blur-3xl opacity-20"></div>
+        </div>
 
-      {/* Desktop Layout */}
-      {!isMobile && !isTablet && (
-        <div className="flex items-center h-full relative z-10">
-          {/* LEFT CONTENT */}
-          <div
-            ref={stickyRef}
-            className="w-[40vw] px-16 sticky left-0 top-0 h-full flex flex-col justify-center bg-white z-20 "
-          >
-            {/* Floating Badge - Exact match */}
-            <div 
-              ref={badgeRef}
-              className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg w-fit"
+        {/* Desktop Layout */}
+        {!isMobile && !isTablet && (
+          <div className="flex items-center h-full relative z-10">
+            {/* LEFT CONTENT */}
+            <div
+              ref={stickyRef}
+              className="w-[40vw] px-16 sticky left-0 top-0 h-full flex flex-col justify-center bg-white z-20 "
             >
-              <Zap className="w-4 h-4 mr-2" />
-              <span className="text-sm font-manrope font-medium tracking-wide">LATEST INSIGHTS</span>
+              {/* Floating Badge - Exact match */}
+              <div
+                ref={badgeRef}
+                className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg w-fit"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                <span className="text-sm font-manrope font-medium tracking-wide">LATEST INSIGHTS</span>
+              </div>
+
+              {/* Title */}
+              <h2
+                ref={titleRef}
+                className="font-marcellus text-7xl text-gray-900 mb-6 leading-[0.9]"
+              >
+                Blogs &<br />
+                <span className="text-gray-700 italic">Insights</span>
+              </h2>
+
+              {/* Description */}
+              <p
+                ref={textRef}
+                className="font-instrument text-gray-600 max-w-md mb-10 leading-relaxed text-lg"
+              >
+                Discover strategies, ideas, and insights from our team to help your
+                brand grow, innovate, and succeed in the digital world.
+              </p>
+
+              {/* CTA Button - Desktop */}
+              <Link
+                ref={buttonRef}
+                href="/blogs"
+                className="group relative inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-xl text-sm font-medium overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gray-900/20 font-manrope w-fit"
+                style={{ opacity: 1 }}
+              >
+                <span className="relative z-10">View All Articles</span>
+                <ArrowUpRight className="relative z-10 w-4 h-4 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+              </Link>
             </div>
 
-            {/* Title */}
-            <h2
-              ref={titleRef}
-              className="font-marcellus text-7xl text-gray-900 mb-6 leading-[0.9]"
+            {/* BLOG CARDS - Horizontal Scroll */}
+            <div
+              ref={trackRef}
+              className="flex gap-8 ml-10 pr-40 items-center"
+              style={{ overflow: "visible" }}
             >
-              Blogs &<br />
-              <span className="text-gray-700 italic">Insights</span>
-            </h2>
+              {recentPosts.map((post, index) => (
+                <Link
+                  href={`/blog/${post.slug}`}
+                  key={post.id}
+                  className="group w-[380px] bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-2 hover:border-gray-400"
+                >
+                  {/* IMAGE */}
+                  <div className="relative h-56 w-full overflow-hidden">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
 
-            {/* Description */}
-            <p
-              ref={textRef}
-              className="font-instrument text-gray-600 max-w-md mb-10 leading-relaxed text-lg"
-            >
-              Discover strategies, ideas, and insights from our team to help your
-              brand grow, innovate, and succeed in the digital world.
-            </p>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
 
-            {/* CTA Button - Desktop */}
-            <Link
-              ref={buttonRef}
-              href="/blogs"
-              className="group relative inline-flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-xl text-sm font-medium overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gray-900/20 font-manrope w-fit"
-              style={{ opacity: 1 }}
-            >
-              <span className="relative z-10">View All Articles</span>
-              <ArrowUpRight className="relative z-10 w-4 h-4 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-            </Link>
-          </div>
-
-          {/* BLOG CARDS - Horizontal Scroll */}
-          <div
-            ref={trackRef}
-            className="flex gap-8 ml-10 pr-40 items-center"
-            style={{ overflow: "visible" }}
-          >
-            {recentPosts.map((post, index) => (
-              <Link
-                href={`/blog/${post.slug}`}
-                key={post.id}
-                className="group w-[380px] bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-2 hover:border-gray-400"
-              >
-                {/* IMAGE */}
-                <div className="relative h-56 w-full overflow-hidden">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
-
-                  {/* Category Badge */}
-                  <div className="absolute top-4 left-4 z-10">
-                    <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-manrope font-semibold uppercase tracking-wider rounded-full shadow-lg border border-gray-200">
-                      {post.category}
-                    </span>
-                  </div>
-
-                  {/* Date Badge */}
-                  <div className="absolute top-4 right-4 z-10">
-                    <span className="px-3 py-1.5 bg-black/80 backdrop-blur-sm text-white text-xs font-manrope rounded-full shadow-lg">
-                      {post.day} {post.month}
-                    </span>
-                  </div>
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-6">
-                  {/* META */}
-                  <div className="flex items-center gap-4 mb-4 text-gray-500 text-sm font-manrope">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4" />
-                      <span>{post.day} {post.month}, {post.year}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <MessageCircle className="w-4 h-4" />
-                      <span>{post.comments}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-
-                  {/* TITLE */}
-                  <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
-                    {post.title}
-                  </h3>
-
-                  {/* EXCERPT */}
-                  <p className="font-instrument text-gray-600 text-sm mb-5 line-clamp-2 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-
-                  {/* AUTHOR & READ MORE */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-200">
-                        <Image
-                          src={post.authorImage}
-                          alt={post.author}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <span className="font-manrope text-sm font-medium text-gray-700">
-                        {post.author}
+                    {/* Category Badge */}
+                    <div className="absolute top-4 right-4 z-10">
+                      <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-manrope font-semibold uppercase tracking-wider rounded-full shadow-lg border border-gray-200">
+                        {post.category}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                      <span className="font-manrope text-sm font-medium">Read</span>
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+
+                  </div>
+
+                  {/* CONTENT */}
+                  <div className="p-6">
+                    {/* META */}
+                    <div className="flex items-center gap-4 mb-4 text-gray-500 text-sm font-manrope">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4" />
+                        <span>{post.day} {post.month}, {post.year}</span>
+                      </div>
+                    </div>
+
+                    {/* TITLE */}
+                    <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
+                      {post.title}
+                    </h3>
+
+                    {/* EXCERPT */}
+                    <p className="font-instrument text-gray-600 text-sm mb-5 line-clamp-2 leading-relaxed">
+                      {post.excerpt}
+                    </p>
+
+                    {/* AUTHOR & READ MORE */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+
+                      <div className="flex items-center gap-1 text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
+                        <span className="font-manrope text-sm font-medium">Read</span>
+                        <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Mobile/Tablet Layout - Horizontal Scroll with Side Buttons */}
       {(isMobile || isTablet) && (
@@ -369,7 +358,7 @@ export default function Blog() {
           {/* Title Section */}
           <div className="text-center mb-8 px-4">
             {/* Floating Badge - Exact match for mobile */}
-            <div 
+            <div
               ref={badgeRef}
               className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg mx-auto w-fit"
             >
@@ -403,7 +392,7 @@ export default function Blog() {
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            
+
             <button
               ref={nextButtonRef}
               onClick={() => scrollTo('next')}
@@ -418,10 +407,10 @@ export default function Blog() {
             <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
 
             {/* Cards Track - Draggable only, no scrollbar */}
-            <div 
+            <div
               ref={scrollContainerRef}
               className="overflow-hidden"
-              style={{ 
+              style={{
                 WebkitOverflowScrolling: 'touch',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none'
@@ -435,7 +424,7 @@ export default function Blog() {
               <div
                 ref={trackRef}
                 className="flex gap-4 px-4 cursor-grab active:cursor-grabbing"
-                style={{ 
+                style={{
                   width: "fit-content",
                   transform: `translateX(${currentPosition}px)`,
                   transition: 'transform 0.3s ease'
@@ -455,7 +444,7 @@ export default function Blog() {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      
+
                       {/* Gradient Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
 

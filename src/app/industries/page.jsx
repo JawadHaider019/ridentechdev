@@ -4,15 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { 
-  FaHeartbeat, 
-  FaChartLine, 
-  FaShoppingCart, 
-  FaTruck, 
-  FaGraduationCap, 
-  FaBuilding, 
-  FaHotel, 
-  FaHandsHelping 
+import {
+  FaHeartbeat,
+  FaChartLine,
+  FaShoppingCart,
+  FaTruck,
+  FaGraduationCap,
+  FaBuilding,
+  FaHotel,
+  FaHandsHelping
 } from "react-icons/fa";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -128,7 +128,10 @@ export default function IndustriesPage() {
   const hoverTl = useRef({});
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleImageError = (industryId) => {
@@ -167,20 +170,20 @@ export default function IndustriesPage() {
 
       // Create new timeline for reset
       const tl = gsap.timeline();
-      
+
       if (image) tl.to(image, { scale: 1, duration: 0.3, ease: "power2.out" }, 0);
-      if (icon) tl.to(icon, { scale: 1,  duration: 0.3, ease: "power2.out" }, 0);
+      if (icon) tl.to(icon, { scale: 1, duration: 0.3, ease: "power2.out" }, 0);
       if (number) tl.to(number, { opacity: 0.2, scale: 1, duration: 0.3, ease: "power2.out" }, 0);
       if (content) tl.to(content, { y: 0, duration: 0.3, ease: "power2.out" }, 0);
       if (title) tl.to(title, { color: "#111827", duration: 0.3, ease: "power1.out" }, 0);
       if (button) tl.to(button, { backgroundColor: "#111827", scale: 1, duration: 0.3, ease: "power2.out" }, 0);
       if (arrow) tl.to(arrow, { x: 0, duration: 0.3, ease: "power2.out" }, 0);
-      
-      tl.to(card, { 
-        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)", 
-        borderColor: "#E5E7EB", 
-        duration: 0.3, 
-        ease: "power2.out" 
+
+      tl.to(card, {
+        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        borderColor: "#E5E7EB",
+        duration: 0.3,
+        ease: "power2.out"
       }, 0);
 
       hoverTl.current[idx] = tl;
@@ -210,20 +213,20 @@ export default function IndustriesPage() {
     }
 
     const tl = gsap.timeline();
-    
+
     if (image) tl.to(image, { scale: 1.15, duration: 0.5, ease: "power2.out" }, 0);
-    if (icon) tl.to(icon, { scale: 1.2,  duration: 0.4, ease: "back.out(1.7)" }, 0);
+    if (icon) tl.to(icon, { scale: 1.2, duration: 0.4, ease: "back.out(1.7)" }, 0);
     if (number) tl.to(number, { opacity: 0.3, scale: 1.1, duration: 0.4, ease: "power2.out" }, 0);
     if (content) tl.to(content, { y: -5, duration: 0.4, ease: "power2.out" }, 0);
     if (title) tl.to(title, { color: "#4B5563", duration: 0.3, ease: "power1.out" }, 0);
     if (button) tl.to(button, { backgroundColor: "#1F2937", scale: 1.05, duration: 0.3, ease: "back.out(1.2)" }, 0.1);
     if (arrow) tl.to(arrow, { x: 5, duration: 0.3, ease: "power2.out" }, 0.1);
-    
-    tl.to(card, { 
-      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)", 
-      borderColor: "#9CA3AF", 
-      duration: 0.3, 
-      ease: "power2.out" 
+
+    tl.to(card, {
+      boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+      borderColor: "#9CA3AF",
+      duration: 0.3,
+      ease: "power2.out"
     }, 0);
 
     hoverTl.current[index] = tl;
@@ -251,11 +254,11 @@ export default function IndustriesPage() {
       // Industries items stagger animation
       gsap.fromTo(itemsRef.current,
         { y: 60, opacity: 1 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 1, 
-          stagger: 0.2, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.2,
           ease: "power4.out",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -278,7 +281,7 @@ export default function IndustriesPage() {
         title="INDUSTRIES WE SERVE"
         subtitle="Deep domain expertise across sectors delivering tailored solutions for your unique challenges"
         imageSrc="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070&auto=format&fit=crop"
-        overlayColor="bg-white" 
+        overlayColor="bg-white"
       />
 
       {/* Industries List - Responsive */}
@@ -287,14 +290,13 @@ export default function IndustriesPage() {
           <div className="flex flex-col gap-6 md:gap-8 lg:gap-10">
             {industries.map((industry, index) => {
               const isEven = index % 2 === 0;
-              
+
               return (
                 <div
                   key={industry.id}
                   ref={el => itemsRef.current[index] = el}
-                  className={`group relative bg-white rounded-xl md:rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg border border-gray-200 cursor-pointer transition-all duration-300 ${
-                    activeHoverIndex === index ? 'z-10' : 'z-0'
-                  }`}
+                  className={`group relative bg-white rounded-xl md:rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg border border-gray-200 cursor-pointer transition-all duration-300 ${activeHoverIndex === index ? 'z-10' : 'z-0'
+                    }`}
                   onClick={() => window.location.href = `/industries/${industry.slug}`}
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={() => handleMouseLeave(index)}
@@ -313,10 +315,10 @@ export default function IndustriesPage() {
                         onError={() => handleImageError(industry.id)}
                         priority={index < 2}
                       />
-                      
+
                       {/* Gradient Overlay */}
                       <div className={`absolute inset-0 bg-gradient-to-r ${industry.color} opacity-60 mix-blend-multiply`}></div>
-                      
+
                       {/* Number Badge - Responsive sizing */}
                       <div className={`industry-number absolute bottom-3 md:bottom-4 lg:bottom-6 ${isEven ? 'right-3 md:right-4 lg:right-6' : 'left-3 md:left-4 lg:left-6'}`}>
                         <span className="text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-marcellus font-black text-white/20">
@@ -338,7 +340,7 @@ export default function IndustriesPage() {
                       <h3 className="industry-title font-marcellus text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-3 md:mb-4">
                         {industry.title}
                       </h3>
-                      
+
                       {/* Description - Responsive text */}
                       <p className="industry-description font-instrument text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 md:mb-6">
                         {industry.description}

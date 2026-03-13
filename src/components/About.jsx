@@ -60,12 +60,12 @@ const About = () => {
       // Title and subtitle animation with stagger
       tl.fromTo([titleRef.current, subtitleRef.current],
         { y: 40, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.9, 
-          stagger: 0.2, 
-          ease: "power4.out" 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          stagger: 0.2,
+          ease: "power4.out"
         },
         "-=0.4"
       );
@@ -79,17 +79,17 @@ const About = () => {
 
       // Image animation with shape reveal and scale
       tl.fromTo(imageRef.current,
-        { 
+        {
           opacity: 0,
           scale: 0.9,
           rotation: 2
         },
-        { 
-          opacity: 1, 
+        {
+          opacity: 1,
           scale: 1,
           rotation: 0,
-          duration: 1.4, 
-          ease: "power3.out" 
+          duration: 1.4,
+          ease: "power3.out"
         },
         "-=0.6"
       );
@@ -106,12 +106,12 @@ const About = () => {
       if (validStats.length > 0) {
         tl.fromTo(validStats,
           { scale: 0.5, opacity: 0 },
-          { 
-            scale: 1, 
-            opacity: 1, 
-            duration: 0.7, 
-            stagger: 0.15, 
-            ease: "back.out(1.4)" 
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "back.out(1.4)"
           },
           "-=0.4"
         );
@@ -131,14 +131,6 @@ const About = () => {
         "-=0.2"
       );
 
-      // Continuous floating animation for badge
-      gsap.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut"
-      });
 
       // Subtle pulse animation for stats on hover
       validStats.forEach(stat => {
@@ -179,16 +171,6 @@ const About = () => {
         }
       });
 
-      // Subtle floating animation for image (only on desktop)
-      if (window.innerWidth >= 1024) {
-        gsap.to(imageRef.current, {
-          y: 8,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
-        });
-      }
     });
 
     return () => {
@@ -202,31 +184,31 @@ const About = () => {
       {/* Background decorative elements with parallax */}
       <div className="about-bg-1 absolute top-40 right-0 w-96 h-96 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
       <div className="about-bg-2 absolute bottom-20 left-20 w-72 h-72 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           {/* Floating Badge */}
-          <div 
-            ref={badgeRef} 
+          <div
+            ref={badgeRef}
             className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg"
           >
             <Zap className="w-4 h-4 mr-2" />
             <span className="text-sm font-manrope font-medium tracking-wide">ABOUT RIDEN TECH</span>
           </div>
-          
+
           {/* Titles with animation */}
           <h2 ref={titleRef} className="font-marcellus text-5xl md:text-6xl text-gray-900 mb-4">
-            We're on a Mission to
+            We&apos;re on a Mission to
           </h2>
           <h2 ref={subtitleRef} className="font-marcellus text-5xl md:text-6xl text-gray-900 mb-6">
             <span className="relative">
               Transform Digital
             </span>
           </h2>
-          
+
           {/* Heading with animation */}
           <p ref={headingRef} className="font-instrument text-xl text-gray-600 max-w-2xl mx-auto">
-            We're not just developers — we're partners in your success, bringing together 
+            We&apos;re not just developers — we&apos;re partners in your success, bringing together
             strategy, design, and technology to create exceptional digital experiences.
           </p>
         </div>
@@ -242,7 +224,7 @@ const About = () => {
                   clipPath: clipPath,
                 }}
               >
-                <div 
+                <div
                   className="w-full h-full bg-cover bg-center"
                   style={{
                     backgroundImage: "url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"
@@ -257,12 +239,12 @@ const About = () => {
             {/* Description Text */}
             <div ref={descriptionRef} className="space-y-4">
               <p className="font-instrument text-lg text-gray-600 leading-relaxed">
-                With over years of experience, Riden Tech is a passionate, driven, and attentive team 
-                offering creative talent and technical expertise. We specialize in transforming complex 
+                With over years of experience, Riden Tech is a passionate, driven, and attentive team
+                offering creative talent and technical expertise. We specialize in transforming complex
                 challenges into seamless digital solutions that resonate with users and drive business growth.
               </p>
               <p className="font-instrument text-lg text-gray-600 leading-relaxed">
-                Our attentive team offers creative talent and expert technical skills, ensuring every project 
+                Our attentive team offers creative talent and expert technical skills, ensuring every project
                 we undertake exceeds expectations and delivers measurable results.
               </p>
             </div>

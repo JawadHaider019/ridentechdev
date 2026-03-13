@@ -34,20 +34,26 @@ const AdminLogin = () => {
 
   // Set isClient to true when component mounts (to avoid hydration issues)
   useEffect(() => {
-    setIsClient(true);
-    setEnvLoaded(true);
+    const timer = setTimeout(() => {
+      setIsClient(true);
+      setEnvLoaded(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   // Check if already authenticated on mount
   useEffect(() => {
     if (isClient) {
-      try {
-        const auth = localStorage.getItem('admin-auth');
-        setIsAuthenticated(auth === 'true');
-      } catch (error) {
-        console.error('Error accessing localStorage:', error);
-        setIsAuthenticated(false);
-      }
+      const timer = setTimeout(() => {
+        try {
+          const auth = localStorage.getItem('admin-auth');
+          setIsAuthenticated(auth === 'true');
+        } catch (error) {
+          console.error('Error accessing localStorage:', error);
+          setIsAuthenticated(false);
+        }
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [isClient]);
 
@@ -161,7 +167,7 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
       {/* Background Pattern - Black dots */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, #000000 1px, transparent 0)`,

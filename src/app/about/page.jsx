@@ -5,7 +5,7 @@ import AboutUs from "@/components/AboutUs";
 import CEOMessage from "@/components/CEOMessage";
 import Team from '@/components/Team'
 import Technologies from "@/components/Technologies";
-import Testimonials from "@/components/Testimonials";
+// import Testimonials from "@/components/Testimonials";
 import Blog from "@/components/Blog";
 export default function AboutPage() {
   return (
@@ -22,7 +22,7 @@ export default function AboutPage() {
     <CEOMessage/>
     <Team/>
     <Technologies/>
-    <Testimonials/>
+    {/* <Testimonials/> */}
     <Blog/>
     </main>
   );

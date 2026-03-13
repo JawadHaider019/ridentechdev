@@ -6,8 +6,8 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroSection from "@/components/HeroSection";
-import { 
-  FiMail, FiPhone, FiMapPin, FiClock, FiSend, 
+import {
+  FiMail, FiPhone, FiMapPin, FiClock, FiSend,
   FiGithub, FiTwitter, FiLinkedin, FiInstagram,
   FiCheckCircle
 } from "react-icons/fi";
@@ -42,7 +42,7 @@ export default function ContactPage() {
     e.preventDefault();
     // Simulate form submission
     setFormStatus({ submitted: true, success: true, message: 'Thank you! We\'ll get back to you soon.' });
-    
+
     // Reset form after 3 seconds
     setTimeout(() => {
       setFormStatus({ submitted: false, success: false, message: '' });
@@ -74,11 +74,11 @@ export default function ContactPage() {
       // Form animation
       gsap.fromTo(formRef.current,
         { y: 50, opacity: 0, scale: 0.98 },
-        { 
-          y: 0, 
-          opacity: 1, 
+        {
+          y: 0,
+          opacity: 1,
           scale: 1,
-          duration: 1, 
+          duration: 1,
           ease: "power3.out",
           scrollTrigger: {
             trigger: formRef.current,
@@ -91,11 +91,11 @@ export default function ContactPage() {
       // Contact cards animations
       gsap.fromTo(cardRefs.current,
         { y: 30, opacity: 0, scale: 0.95 },
-        { 
-          y: 0, 
-          opacity: 1, 
+        {
+          y: 0,
+          opacity: 1,
           scale: 1,
-          duration: 0.6, 
+          duration: 0.6,
           stagger: 0.15,
           ease: "back.out(1.4)",
           scrollTrigger: {
@@ -109,10 +109,10 @@ export default function ContactPage() {
       // Social icons animation
       gsap.fromTo(socialRefs.current,
         { scale: 0, opacity: 0 },
-        { 
-          scale: 1, 
+        {
+          scale: 1,
           opacity: 1,
-          duration: 0.5, 
+          duration: 0.5,
           stagger: 0.1,
           ease: "back.out(1.7)",
           scrollTrigger: {
@@ -126,10 +126,10 @@ export default function ContactPage() {
       // Footer animation
       gsap.fromTo(footerRef.current,
         { y: 50, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 1, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
           ease: "power3.out",
           scrollTrigger: {
             trigger: footerRef.current,
@@ -166,7 +166,7 @@ export default function ContactPage() {
             </h2>
 
             <p ref={subtitleRef} className="font-['Manrope'] text-gray-600 max-w-2xl mx-auto">
-              Fill out the form below and we'll get back to you within 24 hours.
+              Fill out the form below and we&apos;ll get back to you within 24 hours.
             </p>
           </div>
 
@@ -386,7 +386,7 @@ const ContactCard = forwardRef(({ icon, title, text, link }, ref) => {
     // Hover animation
     const handleMouseEnter = () => {
       if (hoverTl.current) hoverTl.current.kill();
-      
+
       hoverTl.current = gsap.timeline();
       hoverTl.current.to(card, {
         y: -5,
@@ -394,7 +394,7 @@ const ContactCard = forwardRef(({ icon, title, text, link }, ref) => {
         duration: 0.3,
         ease: "power2.out"
       });
-      
+
       // Animate icon
       const iconContainer = card.querySelector('.contact-icon');
       gsap.to(iconContainer, {
@@ -406,14 +406,14 @@ const ContactCard = forwardRef(({ icon, title, text, link }, ref) => {
 
     const handleMouseLeave = () => {
       if (hoverTl.current) hoverTl.current.kill();
-      
+
       gsap.to(card, {
         y: 0,
         boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         duration: 0.3,
         ease: "power2.out"
       });
-      
+
       const iconContainer = card.querySelector('.contact-icon');
       gsap.to(iconContainer, {
         scale: 1,
@@ -451,7 +451,7 @@ const ContactCard = forwardRef(({ icon, title, text, link }, ref) => {
       </h3>
 
       <p className="font-['Manrope'] text-gray-600 text-sm">{text}</p>
-      
+
       {link && (
         <div className="mt-3 text-xs text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           Click to {title === 'Email' ? 'send email' : title === 'Call' ? 'call now' : 'view location'} →

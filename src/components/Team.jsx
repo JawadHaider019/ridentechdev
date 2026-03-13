@@ -1,6 +1,6 @@
 // components/Team.jsx
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -42,7 +42,14 @@ export default function Team() {
   const cardsContainerRef = useRef(null);
   const cardsRef = useRef([]);
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const ctx = gsap.context(() => {
       // Create a timeline for section entrance
       const tl = gsap.timeline({
@@ -76,40 +83,38 @@ export default function Team() {
 
       // Cards stagger animation
       tl.fromTo(cardsRef.current,
-        { 
-          y: 60, 
+        {
+          y: 60,
           opacity: 0,
           scale: 0.95
         },
-        { 
-          y: 0, 
+        {
+          y: 0,
           opacity: 1,
           scale: 1,
-          duration: 0.8, 
-          stagger: 0.2, 
-          ease: "power3.out" 
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power3.out"
         },
         "-=0.2"
       );
 
-      // Floating animation for badge
-      gsap.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        delay: 1
-      });
 
     }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === sectionRef.current) t.kill(true);
+      });
+    };
+  }, [mounted]);
+
+  if (!mounted) return <section ref={sectionRef} className="w-full bg-gradient-to-br from-black to-[#0A0A0A] py-24 px-6 md:px-20 relative overflow-hidden" />;
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       className="w-full bg-gradient-to-br from-black to-[#0A0A0A] py-24 px-6 md:px-20 relative overflow-hidden"
     >
       {/* Background decorative elements */}
@@ -122,7 +127,7 @@ export default function Team() {
         {/* Header - Matching About section style */}
         <div className="text-center mb-16">
           {/* Badge */}
-          <div 
+          <div
             ref={badgeRef}
             className="inline-flex items-center bg-gradient-to-r from-gray-800 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg border border-gray-700"
           >
@@ -130,7 +135,7 @@ export default function Team() {
           </div>
 
           {/* Title */}
-          <h2 
+          <h2
             ref={titleRef}
             className="font-marcellus text-5xl md:text-6xl text-white mb-4"
           >
@@ -138,7 +143,7 @@ export default function Team() {
           </h2>
 
           {/* Subtitle */}
-          <p 
+          <p
             ref={subtitleRef}
             className="font-instrument text-xl text-gray-400 max-w-2xl mx-auto"
           >
@@ -147,7 +152,7 @@ export default function Team() {
         </div>
 
         {/* Team Grid */}
-        <div 
+        <div
           ref={cardsContainerRef}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12"
         >
@@ -167,22 +172,22 @@ export default function Team() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   priority={index === 0}
                 />
-                
+
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
-                
+
                 {/* Content - Left Aligned */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-left">
                   {/* Name - Left Aligned */}
                   <h3 className="font-marcellus text-xl font-bold text-white mb-1">
                     {member.name}
                   </h3>
-                  
+
                   {/* Role - Left Aligned */}
                   <p className="font-manrope text-sm text-gray-300 mb-3">
                     {member.role}
                   </p>
-                  
+
                   {/* Description - Appears on hover */}
                   <div className="overflow-hidden max-h-0 group-hover:max-h-32 transition-all duration-500">
                     <p className="font-instrument text-sm text-gray-300 leading-relaxed">

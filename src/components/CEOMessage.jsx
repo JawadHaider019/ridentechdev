@@ -1,6 +1,6 @@
 // components/CEOMessage.jsx
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,8 +15,14 @@ export default function CEOMessage() {
   const titleRef = useRef(null);
   const messageRef = useRef(null);
   const quoteRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const ctx = gsap.context(() => {
       // Create a timeline with scroll trigger
       const tl = gsap.timeline({
@@ -30,44 +36,44 @@ export default function CEOMessage() {
 
       // Quote mark animation (from left)
       tl.fromTo(quoteRef.current,
-        { 
-          x: -100, 
-          opacity: 0 
+        {
+          x: -100,
+          opacity: 0
         },
-        { 
-          x: 0, 
-          opacity: 0.1, 
-          duration: 1, 
-          ease: "power3.out" 
+        {
+          x: 0,
+          opacity: 0.1,
+          duration: 1,
+          ease: "power3.out"
         }
       );
 
       // Name animation (from left)
       tl.fromTo(nameRef.current,
-        { 
-          x: -100, 
-          opacity: 0 
+        {
+          x: -100,
+          opacity: 0
         },
-        { 
-          x: 0, 
-          opacity: 1, 
-          duration: 0.9, 
-          ease: "power3.out" 
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: "power3.out"
         },
         "-=0.7"
       );
 
       // Title animation (from left)
       tl.fromTo(titleRef.current,
-        { 
-          x: -100, 
-          opacity: 0 
+        {
+          x: -100,
+          opacity: 0
         },
-        { 
-          x: 0, 
-          opacity: 1, 
-          duration: 0.8, 
-          ease: "power3.out" 
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out"
         },
         "-=0.6"
       );
@@ -76,16 +82,16 @@ export default function CEOMessage() {
       const paragraphs = messageRef.current?.children;
       if (paragraphs) {
         tl.fromTo(paragraphs,
-          { 
-            x: -100, 
-            opacity: 0 
+          {
+            x: -100,
+            opacity: 0
           },
-          { 
-            x: 0, 
-            opacity: 1, 
-            duration: 0.8, 
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
             stagger: 0.15,
-            ease: "power3.out" 
+            ease: "power3.out"
           },
           "-=0.5"
         );
@@ -93,37 +99,35 @@ export default function CEOMessage() {
 
       // Image animation (from right)
       tl.fromTo(imageRef.current,
-        { 
-          x: 100, 
-          opacity: 0 
+        {
+          x: 100,
+          opacity: 0
         },
-        { 
-          x: 0, 
-          opacity: 1, 
-          duration: 1.2, 
-          ease: "power4.out" 
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: "power4.out"
         },
         "-=0.8"
       );
 
-      // Continuous floating animation for image (like in About component)
-      gsap.to(imageRef.current, {
-        y: 8,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        delay: 1.5
-      });
 
     }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === sectionRef.current) t.kill(true);
+      });
+    };
+  }, [mounted]);
+
+  if (!mounted) return <section ref={sectionRef} className="relative py-24 bg-white overflow-hidden" />;
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       className="relative py-24 bg-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -131,15 +135,15 @@ export default function CEOMessage() {
           {/* Left Column - Message (slides from left) */}
           <div ref={textContentRef} className="relative">
             {/* Quote mark */}
-            <div 
+            <div
               ref={quoteRef}
               className="absolute -top-10 -left-10 text-9xl font-serif text-gray-200 select-none"
             >
-              "
+              &quot;
             </div>
 
             {/* Name */}
-            <h2 
+            <h2
               ref={nameRef}
               className="font-marcellus text-4xl md:text-5xl text-gray-900 mb-2"
             >
@@ -147,7 +151,7 @@ export default function CEOMessage() {
             </h2>
 
             {/* Title */}
-            <p 
+            <p
               ref={titleRef}
               className="font-manrope text-lg text-gray-600 mb-6"
             >
@@ -155,28 +159,28 @@ export default function CEOMessage() {
             </p>
 
             {/* Message paragraphs */}
-            <div 
+            <div
               ref={messageRef}
               className="space-y-6"
             >
               <p className="font-instrument text-xl text-gray-700 leading-relaxed">
-                "Technology is not just about code and algorithms — it's about people, 
-                their dreams, and the problems we solve together. Every line of code we write 
-                is an opportunity to make someone's life better, easier, or more meaningful."
+                &quot;Technology is not just about code and algorithms — it&apos;s about people,
+                their dreams, and the problems we solve together. Every line of code we write
+                is an opportunity to make someone&apos;s life better, easier, or more meaningful.&quot;
               </p>
               <p className="font-instrument text-gray-600 leading-relaxed">
-                When I founded Riden Tech over a decade ago, I envisioned a company where 
-                innovation meets empathy, where technical excellence serves human needs. 
-                Today, I'm proud to lead a team that shares this vision — brilliant minds 
-                who understand that our real job is to transform challenges into opportunities 
+                When I founded Riden Tech over a decade ago, I envisioned a company where
+                innovation meets empathy, where technical excellence serves human needs.
+                Today, I&apos;m proud to lead a team that shares this vision — brilliant minds
+                who understand that our real job is to transform challenges into opportunities
                 for our clients.
               </p>
-             
+
             </div>
           </div>
 
           {/* Right Column - Image with floating animation */}
-          <div 
+          <div
             ref={imageRef}
             className="relative h-[500px] w-full max-w-[500px] mx-auto lg:mx-0 lg:ml-auto"
           >

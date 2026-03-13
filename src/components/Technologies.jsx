@@ -1,13 +1,13 @@
 // components/Technologies.jsx
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { 
-  SiNextdotjs, 
-  SiReact, 
-  SiTypescript, 
-  SiNodedotjs, 
+import {
+  SiNextdotjs,
+  SiReact,
+  SiTypescript,
+  SiNodedotjs,
   SiLaravel,
   SiMongodb,
   SiMysql,
@@ -43,8 +43,16 @@ export default function Technologies() {
   const iconsContainerRef = useRef(null);
   const iconRefs = useRef([]);
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const ctx = gsap.context(() => {
+      // ... same logic ...
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -76,13 +84,13 @@ export default function Technologies() {
 
       // Icons stagger animation with bounce effect
       tl.fromTo(iconRefs.current,
-        { 
-          scale: 0.5, 
+        {
+          scale: 0.5,
           opacity: 0,
           y: 40
         },
-        { 
-          scale: 1, 
+        {
+          scale: 1,
           opacity: 1,
           y: 0,
           duration: 0.6,
@@ -92,24 +100,22 @@ export default function Technologies() {
         "-=0.2"
       );
 
-      // Continuous floating animation for badge
-      gsap.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        delay: 1
-      });
 
     }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === sectionRef.current) t.kill(true);
+      });
+    };
+  }, [mounted]);
+
+  if (!mounted) return <section ref={sectionRef} className="py-20 bg-white overflow-hidden relative" />;
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       className="py-20 bg-white overflow-hidden relative"
     >
       {/* Background Elements - Subtle gray */}
@@ -122,7 +128,7 @@ export default function Technologies() {
         {/* Section Header */}
         <div className="text-center mb-16">
           {/* Badge */}
-          <div 
+          <div
             ref={badgeRef}
             className="inline-flex items-center bg-gray-100 text-gray-700 rounded-full px-4 py-2 mb-4 border border-gray-200"
           >
@@ -131,7 +137,7 @@ export default function Technologies() {
           </div>
 
           {/* Title */}
-          <h2 
+          <h2
             ref={titleRef}
             className="font-marcellus text-4xl md:text-5xl lg:text-6xl text-gray-900 mb-4"
           >
@@ -139,7 +145,7 @@ export default function Technologies() {
           </h2>
 
           {/* Subtitle */}
-          <p 
+          <p
             ref={subtitleRef}
             className="font-instrument text-lg text-gray-600 max-w-2xl mx-auto"
           >
@@ -148,7 +154,7 @@ export default function Technologies() {
         </div>
 
         {/* Icons Grid */}
-        <div 
+        <div
           ref={iconsContainerRef}
           className="flex flex-wrap justify-center gap-8 md:gap-10 max-w-5xl mx-auto"
         >

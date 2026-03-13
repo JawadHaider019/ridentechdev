@@ -149,7 +149,7 @@ export default function HeroSection({
         {/* Hero Image */}
         <div
           ref={heroContainerRef}
-          className="w-full max-w-7xl h-[85vh] relative overflow-hidden mx-auto flex justify-center items-center"
+          className="w-full max-w-7xl h-[85vh]  relative overflow-hidden mx-auto flex justify-center items-center"
         >
         {/* Full image */}
         <Image

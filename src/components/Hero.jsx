@@ -17,17 +17,21 @@ const Hero = () => {
   const imageRef = useRef(null);
   const [clipPath, setClipPath] = useState("");
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    // Set responsive clip path based on screen size
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const updateClipPath = () => {
+      // ... same logic ...
       if (window.innerWidth < 768) {
-        // Mobile clip path - smaller version
         setClipPath("path('M 10,20 L 100,20 A 10,10 0,0,0 110,10 L 110,10 A 10,10 0,0,1 120,0 L 260,0 A 10,10 0,0,1 270,10 L 270,235 A 10,10 0,0,1 260,245 L 10,245 A 10,10 0,0,1 0,235 L 0,30 A 10,10 0,0,1 10,20 Z')");
       } else if (window.innerWidth < 1024) {
-        // Tablet clip path - medium version
         setClipPath("path('M 15,30 L 150,30 A 15,15 0,0,0 165,15 L 165,15 A 15,15 0,0,1 180,0 L 390,0 A 15,15 0,0,1 405,15 L 405,352 A 15,15 0,0,1 390,367 L 15,367 A 15,15 0,0,1 0,352 L 0,45 A 15,15 0,0,1 15,30 Z')");
       } else {
-        // Desktop clip path - original version
         setClipPath("path('M 20,40 L 200,40 A 20,20 0,0,0 220,20 L 220,20 A 20,20 0,0,1 240,0 L 520,0 A 20,20 0,0,1 540,20 L 540,470 A 20,20 0,0,1 520,490 L 20,490 A 20,20 0,0,1 0,470 L 0,60 A 20,20 0,0,1 20,40 Z')");
       }
     };
@@ -54,12 +58,12 @@ const Hero = () => {
       // Heading lines stagger animation
       tl.fromTo(headingLinesRef.current,
         { y: 40, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.9, 
-          stagger: 0.15, 
-          ease: "power4.out" 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: "power4.out"
         },
         "-=0.4"
       );
@@ -94,47 +98,39 @@ const Hero = () => {
 
       // Image animation with clip path reveal
       tl.fromTo(imageRef.current,
-        { 
+        {
           opacity: 0,
           scale: 0.95
         },
-        { 
-          opacity: 1, 
+        {
+          opacity: 1,
           scale: 1,
-          duration: 1.2, 
-          ease: "power3.out" 
+          duration: 1.2,
+          ease: "power3.out"
         },
         "-=0.8"
       );
 
-      // Subtle floating animation for image (only on desktop)
-      if (window.innerWidth >= 1024) {
-        gsap.to(imageRef.current, {
-          y: 10,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
-        });
-      }
     });
 
     return () => {
       ctx.revert();
       window.removeEventListener('resize', updateClipPath);
     };
-  }, []);
+  }, [mounted]);
+
+  if (!mounted) return <section ref={heroRef} className="relative bg-white sm:h-[100vh] h-auto overflow-hidden" />;
 
   return (
     <section ref={heroRef} className="relative bg-white sm:h-[100vh] h-auto overflow-hidden">
       {/* Background decorative elements - visible on all screens */}
       <div className="absolute top-40 left-0 w-72 h-72 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Desktop: side-by-side, Mobile: stacked with reduced gap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-12 items-center lg:items-start">
-          
+
           {/* Left Content - responsive padding */}
           <div className="space-y-4 md:space-y-5 lg:space-y-6 py-12 md:py-8 order-1">
             {/* Badge - responsive sizing */}
@@ -154,8 +150,8 @@ const Hero = () => {
 
             {/* Description - responsive text */}
             <p ref={descriptionRef} className="font-instrument text-base md:text-lg lg:text-lg text-gray-600 max-w-lg leading-relaxed">
-              We craft cutting-edge digital solutions that drive growth, 
-              enhance efficiency, and transform complex challenges into 
+              We craft cutting-edge digital solutions that drive growth,
+              enhance efficiency, and transform complex challenges into
               seamless experiences.
             </p>
 
@@ -193,7 +189,7 @@ const Hero = () => {
                   }}
                 >
                   {/* IT-Related Image */}
-                  <div 
+                  <div
                     className="w-full h-full bg-cover bg-center"
                     style={{
                       backgroundImage: "url('https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=2070&auto=format&fit=crop')"

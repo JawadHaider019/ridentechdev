@@ -29,7 +29,7 @@ export default function Testimonials() {
   const carouselRef = useRef(null);
   const trackRef = useRef(null);
   const ctaRef = useRef(null);
-  
+
   const [isPaused, setIsPaused] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const animationRef = useRef(null);
@@ -40,10 +40,10 @@ export default function Testimonials() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -116,8 +116,8 @@ export default function Testimonials() {
 
   // Duplicate testimonials for infinite scroll
   const duplicatedTestimonials = [
-    ...testimonials, 
-    ...testimonials, 
+    ...testimonials,
+    ...testimonials,
     ...testimonials,
     ...testimonials
   ];
@@ -175,30 +175,21 @@ export default function Testimonials() {
         ease: "back.out(1.2)"
       }, "-=0.2");
 
-      // Continuous bouncing animation for badge
-      gsap.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        delay: 1
-      });
 
       // Initialize carousel animation
       if (trackRef.current) {
         const trackWidth = trackRef.current.scrollWidth / 4;
-        
+
         // Store current position
         currentXRef.current = 0;
-        
+
         // Create infinite scroll animation
         animationRef.current = gsap.to(trackRef.current, {
           x: -trackWidth,
           duration: 80,
           ease: "none",
           repeat: -1,
-          onUpdate: function() {
+          onUpdate: function () {
             // Store current x position
             if (trackRef.current) {
               const transform = window.getComputedStyle(trackRef.current).transform;
@@ -252,12 +243,12 @@ export default function Testimonials() {
             type: "x",
             edgeResistance: 0.65,
             inertia: true,
-            onDragStart: function() {
+            onDragStart: function () {
               if (animationRef.current) {
                 animationRef.current.pause();
               }
             },
-            onDragEnd: function() {
+            onDragEnd: function () {
               setTimeout(() => {
                 if (animationRef.current && !isPaused) {
                   animationRef.current.resume();
@@ -290,14 +281,14 @@ export default function Testimonials() {
         {/* Header - Updated to match reference style */}
         <div ref={headerRef} className="text-center mb-16">
           {/* Floating Badge - Exact match */}
-          <div 
-            ref={badgeRef} 
+          <div
+            ref={badgeRef}
             className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg"
           >
             <Zap className="w-4 h-4 mr-2" />
             <span className="text-sm font-manrope font-medium tracking-wide">CLIENT TESTIMONIALS</span>
           </div>
-          
+
           {/* Titles with animation */}
           <h2 ref={titleRef} className="font-marcellus text-5xl md:text-6xl text-gray-900 mb-4">
             What Our Clients Say
@@ -307,10 +298,10 @@ export default function Testimonials() {
               About Riden Tech
             </span>
           </h2>
-          
+
           {/* Heading with animation */}
           <p ref={headingRef} className="font-instrument text-xl text-gray-600 max-w-2xl mx-auto">
-            Real stories from the people and companies we've helped transform through 
+            Real stories from the people and companies we&apos;re helped transform through
             innovative technology solutions and dedicated partnership.
           </p>
         </div>
@@ -323,7 +314,7 @@ export default function Testimonials() {
 
           {/* Carousel Track */}
           <div ref={carouselRef} className="overflow-hidden">
-            <div 
+            <div
               ref={trackRef}
               className="flex gap-6 cursor-default"
               style={{ width: "fit-content" }}
@@ -336,22 +327,21 @@ export default function Testimonials() {
                   {/* Testimonial Card - Black/White Theme */}
                   <div className="relative h-[300px] my-5">
                     <div className="relative h-full bg-white p-6 rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group hover:border-gray-400">
-                      
+
                       {/* Large Quote Mark */}
                       <div className="absolute top-4 right-4 text-8xl font-serif text-gray-200 group-hover:text-gray-300 transition-colors duration-300">
-                        "
+                        &quot;
                       </div>
 
                       {/* Rating stars - Gray theme */}
                       <div className="flex gap-1 mb-3 relative z-10">
                         {[...Array(5)].map((_, i) => (
-                          <Star 
+                          <Star
                             key={i}
-                            className={`w-4 h-4 ${
-                              i < testimonial.rating
-                                ? 'text-gray-800 fill-gray-800'
-                                : 'text-gray-200 fill-gray-200'
-                            }`}
+                            className={`w-4 h-4 ${i < testimonial.rating
+                              ? 'text-gray-800 fill-gray-800'
+                              : 'text-gray-200 fill-gray-200'
+                              }`}
                           />
                         ))}
                       </div>
@@ -359,7 +349,7 @@ export default function Testimonials() {
                       {/* Quote */}
                       <div className="flex-1 relative z-10">
                         <p className="font-manrope text-gray-700 text-sm leading-relaxed line-clamp-4">
-                          "{testimonial.quote}"
+                          &quot;{testimonial.quote}&quot;
                         </p>
                       </div>
 

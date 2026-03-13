@@ -3,16 +3,18 @@
 import { useEffect, useRef, useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, Sparkles, Layers, Zap, Shield, Users, TrendingUp, Clock, Globe, Lock, Cloud, Smartphone, Database, Code, Settings, BarChart, Award , Map,
-  Heart} from "lucide-react";
-import { 
-  FaHeartbeat, 
-  FaChartLine, 
-  FaShoppingCart, 
-  FaTruck, 
-  FaGraduationCap, 
-  FaBuilding, 
-  FaHotel, 
+import {
+  ArrowRight, ChevronLeft, Sparkles, Layers, Zap, Shield, Users, TrendingUp, Clock, Globe, Lock, Cloud, Smartphone, Database, Code, Settings, BarChart, Award, Map,
+  Heart
+} from "lucide-react";
+import {
+  FaHeartbeat,
+  FaChartLine,
+  FaShoppingCart,
+  FaTruck,
+  FaGraduationCap,
+  FaBuilding,
+  FaHotel,
   FaHandsHelping,
   FaWifi,
   FaHospital,
@@ -25,7 +27,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Complete industry data with all details
 const industries = [
- 
+
   {
     id: 1,
     number: "01",
@@ -319,13 +321,13 @@ const GSAPCounter = ({ value, suffix, decimals = 0 }) => {
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
           setHasAnimated(true);
-          
+
           // Animate from 0 to value
           gsap.to({ val: 0 }, {
             val: value,
             duration: 2.5,
             ease: "power2.out",
-            onUpdate: function() {
+            onUpdate: function () {
               setCount(this.targets()[0].val);
             }
           });
@@ -350,13 +352,13 @@ const GSAPCounter = ({ value, suffix, decimals = 0 }) => {
 
 export default function IndustryDetailPage({ params }) {
   const { slug } = use(params);
-  
+
   const [mounted, setMounted] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
   const [hoveredSolution, setHoveredSolution] = useState(null);
   const [activeStat, setActiveStat] = useState(null);
-  
+
   const sectionRef = useRef(null);
   const heroRef = useRef(null);
   const featuresRef = useRef([]);
@@ -365,7 +367,7 @@ export default function IndustryDetailPage({ params }) {
   const imageRevealRef = useRef(null);
   const contentRevealRef = useRef(null);
   const hoverTl = useRef({});
-  
+
   // New refs for headings
   const solutionsBadgeRef = useRef(null);
   const solutionsTitleRef = useRef(null);
@@ -375,7 +377,10 @@ export default function IndustryDetailPage({ params }) {
   const industry = industryData[slug] || industryData["healthcare"];
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -385,10 +390,10 @@ export default function IndustryDetailPage({ params }) {
       // Hero content reveal animation
       gsap.fromTo(contentRevealRef.current,
         { x: -50, opacity: 0 },
-        { 
-          x: 0, 
-          opacity: 1, 
-          duration: 1.2, 
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1.2,
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -401,11 +406,11 @@ export default function IndustryDetailPage({ params }) {
       // Image reveal animation
       gsap.fromTo(imageRevealRef.current,
         { scale: 0.9, opacity: 0, x: 50 },
-        { 
-          scale: 1, 
-          opacity: 1, 
+        {
+          scale: 1,
+          opacity: 1,
           x: 0,
-          duration: 1.2, 
+          duration: 1.2,
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -418,10 +423,10 @@ export default function IndustryDetailPage({ params }) {
       // Solutions section heading animations
       gsap.fromTo(solutionsBadgeRef.current,
         { y: -30, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.8, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
           ease: "power3.out",
           scrollTrigger: {
             trigger: solutionsBadgeRef.current,
@@ -433,10 +438,10 @@ export default function IndustryDetailPage({ params }) {
 
       gsap.fromTo(solutionsTitleRef.current,
         { y: 40, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.9, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
           ease: "power4.out",
           scrollTrigger: {
             trigger: solutionsBadgeRef.current,
@@ -449,10 +454,10 @@ export default function IndustryDetailPage({ params }) {
       // Features section heading animations
       gsap.fromTo(featuresBadgeRef.current,
         { y: -30, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.8, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
           ease: "power3.out",
           scrollTrigger: {
             trigger: featuresBadgeRef.current,
@@ -464,10 +469,10 @@ export default function IndustryDetailPage({ params }) {
 
       gsap.fromTo(featuresTitleRef.current,
         { y: 40, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.9, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
           ease: "power4.out",
           scrollTrigger: {
             trigger: featuresBadgeRef.current,
@@ -480,10 +485,10 @@ export default function IndustryDetailPage({ params }) {
       // Features stagger animation
       gsap.fromTo(featuresRef.current,
         { y: 50, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.8, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
           stagger: 0.15,
           ease: "back.out(1.2)",
           scrollTrigger: {
@@ -497,10 +502,10 @@ export default function IndustryDetailPage({ params }) {
       // Solutions stagger animation
       gsap.fromTo(solutionsRef.current,
         { scale: 0.9, opacity: 0 },
-        { 
-          scale: 1, 
-          opacity: 1, 
-          duration: 0.6, 
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
           stagger: 0.05,
           ease: "power2.out",
           scrollTrigger: {
@@ -514,10 +519,10 @@ export default function IndustryDetailPage({ params }) {
       // Stats reveal animation
       gsap.fromTo(statsRef.current,
         { y: 30, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 0.8, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
           stagger: 0.15,
           ease: "power2.out",
           scrollTrigger: {
@@ -528,13 +533,15 @@ export default function IndustryDetailPage({ params }) {
         }
       );
 
-      // Continuous floating animation for badge
-      gsap.to('.industry-badge', {
-        y: -4,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
+      // Parallax effect for image
+      gsap.to('.industry-image', {
+        y: 30,
+        scrollTrigger: {
+          trigger: '.industry-image',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        }
       });
 
       // Parallax effect for image
@@ -572,7 +579,7 @@ export default function IndustryDetailPage({ params }) {
       duration: 0.4,
       ease: "power2.out"
     });
-    
+
     hoverTl.current[`feature-${index}`] = tl;
   };
 
@@ -594,7 +601,7 @@ export default function IndustryDetailPage({ params }) {
       duration: 0.4,
       ease: "power2.out"
     });
-    
+
     hoverTl.current[`feature-${index}`] = tl;
   };
 
@@ -615,12 +622,12 @@ export default function IndustryDetailPage({ params }) {
       duration: 0.4,
       ease: "power2.out"
     }, 0)
-    .to(card.querySelector('.w-3.h-3.bg-black'), {
-      scale: 1.5,
-      duration: 0.4,
-      ease: "back.out(1.2)"
-    }, 0);
-    
+      .to(card.querySelector('.w-3.h-3.bg-black'), {
+        scale: 1.5,
+        duration: 0.4,
+        ease: "back.out(1.2)"
+      }, 0);
+
     hoverTl.current[`solution-${index}`] = tl;
   };
 
@@ -639,12 +646,12 @@ export default function IndustryDetailPage({ params }) {
       duration: 0.3,
       ease: "power2.out"
     }, 0)
-    .to(card.querySelector('.w-3.h-3.bg-black'), {
-      scale: 1,
-      duration: 0.3,
-      ease: "power2.out"
-    }, 0);
-    
+      .to(card.querySelector('.w-3.h-3.bg-black'), {
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      }, 0);
+
     hoverTl.current[`solution-${index}`] = tl;
   };
 
@@ -687,7 +694,7 @@ export default function IndustryDetailPage({ params }) {
     <div className="min-h-screen bg-white">
       {/* Back Button with enhanced animation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <Link 
+        <Link
           href="/industries"
           className="group inline-flex items-center text-sm text-gray-600 hover:text-black transition-colors font-manrope relative overflow-hidden"
         >
@@ -710,19 +717,19 @@ export default function IndustryDetailPage({ params }) {
                 </div>
                 <span className="text-sm font-manrope text-gray-800 tracking-wide">INDUSTRY EXPERTISE</span>
               </div>
-              
+
               {/* Title */}
               <div className="relative inline-block mb-4 group">
                 <h1 className="font-marcellus text-5xl md:text-6xl lg:text-7xl text-gray-900">
                   {industry.title}
                 </h1>
               </div>
-              
+
               {/* Subtitle */}
               <h2 className="font-manrope text-xl text-gray-700 mb-6 leading-relaxed">
                 {industry.subtitle}
               </h2>
-              
+
               {/* Description */}
               <p className="font-instrument text-gray-600 leading-relaxed text-lg">
                 {industry.description}
@@ -738,9 +745,9 @@ export default function IndustryDetailPage({ params }) {
                     onMouseEnter={() => handleStatMouseEnter(index)}
                     onMouseLeave={() => handleStatMouseLeave(index)}
                   >
-                    <GSAPCounter 
-                      value={stat.value} 
-                      suffix={stat.suffix} 
+                    <GSAPCounter
+                      value={stat.value}
+                      suffix={stat.suffix}
                       decimals={stat.decimals || 0}
                     />
                     <div className="font-manrope text-xs text-gray-600 uppercase tracking-wider mt-1">
@@ -768,17 +775,17 @@ export default function IndustryDetailPage({ params }) {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-black opacity-10 mix-blend-multiply"></div>
-                
+
                 {/* Animated overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
+
                 {/* Decorative patterns */}
                 <div className="absolute top-0 left-0 w-full h-full opacity-0 group-hover:opacity-10 transition-opacity duration-700">
                   <div className="absolute top-10 left-10 w-20 h-20 border border-white/30 rounded-full"></div>
                   <div className="absolute bottom-10 right-10 w-32 h-32 border border-white/20 rounded-full"></div>
                 </div>
               </div>
-              
+
               {/* Floating icon with animation */}
               <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-white rounded-2xl shadow-xl flex items-center justify-center border border-gray-300 transform group-hover:rotate-12 transition-transform duration-500">
                 <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center text-white">
@@ -795,23 +802,23 @@ export default function IndustryDetailPage({ params }) {
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center mb-12">
             {/* Badge with reveal */}
-            <div 
+            <div
               ref={solutionsBadgeRef}
               className="inline-flex items-center bg-white rounded-full px-4 py-2 mb-4 border border-gray-300"
             >
               <Layers className="w-4 h-4 mr-2 text-gray-700" />
               <span className="text-sm font-manrope text-gray-800 tracking-wide">WHAT WE OFFER</span>
             </div>
-            
+
             {/* Title with reveal */}
-            <h2 
+            <h2
               ref={solutionsTitleRef}
               className="font-marcellus text-4xl md:text-5xl text-gray-900 mb-4"
             >
               Our <span className="text-gray-400 italic">Solutions</span>
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {industry.solutions.map((solution, index) => (
               <div
@@ -826,10 +833,10 @@ export default function IndustryDetailPage({ params }) {
               >
                 {/* Animated background with gradient */}
                 <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                
+
                 {/* Scale overlay from center */}
                 <div className="absolute inset-0 bg-black transform scale-0 group-hover:scale-100 transition-transform duration-700 ease-out rounded-xl opacity-0 group-hover:opacity-5"></div>
-                
+
                 {/* Content with enhanced animations */}
                 <div className="flex items-center gap-4 relative z-10">
                   {/* Animated dot with pulse effect */}
@@ -837,16 +844,16 @@ export default function IndustryDetailPage({ params }) {
                     <div className="w-3 h-3 bg-black rounded-full group-hover:scale-150 group-hover:bg-gray-800 transition-all duration-500"></div>
                     <div className="absolute inset-0 w-3 h-3 bg-black rounded-full animate-ping opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
                   </div>
-                  
+
                   {/* Text with scale and color transition */}
                   <p className="font-manrope text-gray-800 group-hover:text-gray-900 transition-all duration-500 group-hover:translate-x-1 text-base md:text-lg">
                     {solution}
                   </p>
-                  
+
                   {/* Subtle arrow on hover */}
                   <ArrowRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-500 text-gray-700" />
                 </div>
-                
+
                 {/* Bottom border animation */}
                 <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
               </div>
@@ -860,23 +867,23 @@ export default function IndustryDetailPage({ params }) {
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center mb-12">
             {/* Badge with reveal */}
-            <div 
+            <div
               ref={featuresBadgeRef}
               className="inline-flex items-center bg-gray-100 rounded-full px-4 py-2 mb-4 border border-gray-300"
             >
               <Sparkles className="w-4 h-4 mr-2 text-gray-700" />
               <span className="text-sm font-manrope text-gray-800 tracking-wide">KEY CAPABILITIES</span>
             </div>
-            
+
             {/* Title with reveal */}
-            <h2 
+            <h2
               ref={featuresTitleRef}
               className="font-marcellus text-4xl md:text-5xl text-gray-900 mb-4"
             >
               What Makes Us <span className="text-gray-400 italic">Different</span>
             </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {industry.features.map((feature, index) => (
               <div
@@ -888,7 +895,7 @@ export default function IndustryDetailPage({ params }) {
               >
                 {/* Subtle background animation */}
                 <div className="absolute inset-0 bg-gray-50 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom"></div>
-                
+
                 <div className="relative z-10">
                   <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                     <div className="text-black">

@@ -47,17 +47,21 @@ const AboutUs = () => {
     }
   ];
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     // Set responsive clip path based on screen size
     const updateClipPath = () => {
       if (window.innerWidth < 768) {
-        // Mobile clip path - smaller version
         setClipPath("path('M 10,20 L 100,20 A 10,10 0,0,0 110,10 L 110,10 A 10,10 0,0,1 120,0 L 260,0 A 10,10 0,0,1 270,10 L 270,235 A 10,10 0,0,1 260,245 L 10,245 A 10,10 0,0,1 0,235 L 0,30 A 10,10 0,0,1 10,20 Z')");
       } else if (window.innerWidth < 1024) {
-        // Tablet clip path - medium version
         setClipPath("path('M 15,30 L 150,30 A 15,15 0,0,0 165,15 L 165,15 A 15,15 0,0,1 180,0 L 390,0 A 15,15 0,0,1 405,15 L 405,352 A 15,15 0,0,1 390,367 L 15,367 A 15,15 0,0,1 0,352 L 0,45 A 15,15 0,0,1 15,30 Z')");
       } else {
-        // Desktop clip path - original version
         setClipPath("path('M 20,40 L 200,40 A 20,20 0,0,0 220,20 L 220,20 A 20,20 0,0,1 240,0 L 520,0 A 20,20 0,0,1 540,20 L 540,470 A 20,20 0,0,1 520,490 L 20,490 A 20,20 0,0,1 0,470 L 0,60 A 20,20 0,0,1 20,40 Z')");
       }
     };
@@ -66,9 +70,9 @@ const AboutUs = () => {
     window.addEventListener('resize', updateClipPath);
 
     // Set initial states
-    gsap.set([badgeRef.current, titleRef.current, subtitleRef.current, headingRef.current, 
-              descriptionRef.current, ...featuresRef.current.filter(el => el), 
-              borderLineRef.current, ctaRef.current, imageRef.current], {
+    gsap.set([badgeRef.current, titleRef.current, subtitleRef.current, headingRef.current,
+    descriptionRef.current, ...featuresRef.current.filter(el => el),
+    borderLineRef.current, ctaRef.current, imageRef.current], {
       opacity: 0,
       y: 30
     });
@@ -112,17 +116,17 @@ const AboutUs = () => {
 
       // Image animation with delay
       masterTl.fromTo(imageRef.current,
-        { 
+        {
           opacity: 0,
           scale: 0.9,
           rotation: 2
         },
-        { 
-          opacity: 1, 
+        {
+          opacity: 1,
           scale: 1,
           rotation: 0,
-          duration: 1.4, 
-          ease: "power3.out" 
+          duration: 1.4,
+          ease: "power3.out"
         },
         0.8 // 0.8s delay
       );
@@ -164,55 +168,7 @@ const AboutUs = () => {
         ease: "back.out(1.2)"
       }, 2.0); // 2.0s delay
 
-      // Continuous floating animation for badge (starts after reveal)
-      masterTl.to(badgeRef.current, {
-        y: -5,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut"
-      }, "+=0.5");
 
-      // Hover animations for feature items
-      validFeatures.forEach(feature => {
-        feature.addEventListener('mouseenter', () => {
-          gsap.to(feature, {
-            x: 5,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-          gsap.to(feature.querySelector('.feature-icon'), {
-            scale: 1.1,
-            backgroundColor: '#1f2937',
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        });
-        feature.addEventListener('mouseleave', () => {
-          gsap.to(feature, {
-            x: 0,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-          gsap.to(feature.querySelector('.feature-icon'), {
-            scale: 1,
-            backgroundColor: '#111827',
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        });
-      });
-
-      // Subtle floating animation for image (only on desktop, starts after reveal)
-      if (window.innerWidth >= 1024) {
-        masterTl.to(imageRef.current, {
-          y: 8,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
-        }, "+=0.5");
-      }
 
       // Parallax effect for background elements (continuous)
       gsap.to('.mission-bg-1', {
@@ -238,27 +194,61 @@ const AboutUs = () => {
 
     return () => {
       ctx.revert();
+      ScrollTrigger.getAll().forEach(t => {
+        if (t.trigger === sectionRef.current) t.kill(true);
+      });
       window.removeEventListener('resize', updateClipPath);
     };
-  }, []);
+  }, [mounted]);
+
+  // Hover handlers for feature items
+  const handleFeatureEnter = (e) => {
+    gsap.to(e.currentTarget, {
+      x: 5,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+    gsap.to(e.currentTarget.querySelector('.feature-icon'), {
+      scale: 1.1,
+      backgroundColor: '#1f2937',
+      duration: 0.3,
+      ease: "power2.out"
+    });
+  };
+
+  const handleFeatureLeave = (e) => {
+    gsap.to(e.currentTarget, {
+      x: 0,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+    gsap.to(e.currentTarget.querySelector('.feature-icon'), {
+      scale: 1,
+      backgroundColor: '#111827',
+      duration: 0.3,
+      ease: "power2.out"
+    });
+  };
+
+  if (!mounted) return <section ref={sectionRef} className="relative py-24 bg-white overflow-hidden" />;
 
   return (
     <section ref={sectionRef} className="relative py-24 bg-white overflow-hidden">
       {/* Background decorative elements with parallax */}
       <div className="mission-bg-1 absolute top-40 right-0 w-96 h-96 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
       <div className="mission-bg-2 absolute bottom-20 left-20 w-72 h-72 bg-gray-100 rounded-full filter blur-3xl opacity-20"></div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
           {/* Floating Badge */}
-          <div 
-            ref={badgeRef} 
+          <div
+            ref={badgeRef}
             className="inline-flex items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-full px-5 py-2.5 mb-6 shadow-lg opacity-0"
           >
             <Zap className="w-4 h-4 mr-2" />
             <span className="text-sm font-manrope font-medium tracking-wide">OUR MISSION</span>
           </div>
-          
+
           {/* Titles with animation */}
           <h2 ref={titleRef} className="font-marcellus text-5xl md:text-6xl text-gray-900 mb-4 opacity-0">
             Your Success,
@@ -280,7 +270,7 @@ const AboutUs = () => {
                   clipPath: clipPath,
                 }}
               >
-                <div 
+                <div
                   className="w-full h-full bg-cover bg-center"
                   style={{
                     backgroundImage: "url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"
@@ -289,19 +279,19 @@ const AboutUs = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Right Side - Content */}
           <div className="order-1 lg:order-2 space-y-6">
             {/* Heading with animation */}
             <p ref={headingRef} className="font-instrument text-xl text-gray-600 leading-relaxed opacity-0">
-              We're dedicated to helping you achieve your goals with a simple, user-friendly experience. 
+              We&apos;re dedicated to helping you achieve your goals with a simple, user-friendly experience.
               We believe our commitment to your success sets us apart.
             </p>
 
             {/* Description Text */}
             <div ref={descriptionRef} className="space-y-4 opacity-0">
               <p className="font-instrument text-lg text-gray-600 leading-relaxed">
-                Our approach combines strategic thinking with technical excellence to deliver solutions 
+                Our approach combines strategic thinking with technical excellence to deliver solutions
                 that not only meet but exceed expectations.
               </p>
             </div>
@@ -314,6 +304,8 @@ const AboutUs = () => {
                   ref={el => featuresRef.current[index] = el}
                   className="flex items-start space-x-3 cursor-pointer group opacity-0"
                   style={{ transform: 'translateX(30px)' }}
+                  onMouseEnter={handleFeatureEnter}
+                  onMouseLeave={handleFeatureLeave}
                 >
                   <div className="feature-icon flex-shrink-0 w-8 h-8 bg-gray-900 text-white rounded-lg flex items-center justify-center transition-all duration-300">
                     {feature.icon}
@@ -342,7 +334,7 @@ const AboutUs = () => {
                 <span>Start Projects</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-              
+
               <Link
                 href="/about"
                 className="group inline-flex items-center space-x-2 border-2 border-gray-900 text-gray-900 px-8 py-4 rounded-lg text-sm font-medium hover:bg-gray-900 hover:text-white transition-all duration-300 hover:shadow-lg font-manrope"
