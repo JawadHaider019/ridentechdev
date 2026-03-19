@@ -36,7 +36,7 @@ export default function CTA() {
         behavior: 'smooth'
       });
     } else {
-      // Navigate to contact page
+      
       navigate('/contact');
     }
   };
@@ -44,12 +44,10 @@ export default function CTA() {
   useEffect(() => {
     if (!mounted) return;
 
-    // Reset animation state when pathname changes
     setHasAnimated(false);
 
     const elements = [badgeRef.current, titleRef.current, descriptionRef.current, buttonRef.current].filter(Boolean);
 
-    // Reset to invisible
     gsap.set(elements, { 
       opacity: 0, 
       y: 30,
@@ -88,6 +86,7 @@ export default function CTA() {
       };
     }, 100);
 
+
     return () => {
       clearTimeout(timer);
       gsap.killTweensOf(elements);
@@ -101,7 +100,7 @@ export default function CTA() {
       ref={sectionRef}
       className="relative py-20 md:py-24 overflow-hidden"
     >
-      {/* Fixed Background Image */}
+      
       <div
         className="absolute inset-0 bg-fixed bg-cover bg-center"
         style={{
@@ -109,7 +108,6 @@ export default function CTA() {
         }}
       />
 
-      {/* Gradient Overlay */}
       <div
         className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/90"
         style={{
@@ -160,5 +158,6 @@ export default function CTA() {
         </div>
       </div>
     </section>
+
   );
 }
