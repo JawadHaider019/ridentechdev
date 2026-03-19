@@ -35,7 +35,7 @@ const technologies = [
   { name: "React", icon: SiReact, color: "text-[#61DAFB]" },
   { name: "Next.js", icon: SiNextdotjs, color: "text-gray-900" },
   { name: "JavaScript", icon: TbBrandJavascript, color: "text-[#FFCA28]" },
-  { name: "Tailwind CSS", icon: SiTailwindcss, color: "text-[#06B6D4]" },
+  { name: "Tailwind", icon: SiTailwindcss, color: "text-[#06B6D4]" },
   { name: "Bootstrap", icon: SiBootstrap, color: "text-[#7952B3]" },
 
   // Row 2 - Backend
@@ -169,7 +169,7 @@ export default function Technologies() {
           {/* Title */}
           <h2
             ref={titleRef}
-            className="font-manrope font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-3 tracking-tight"
+            className="font-manrope text-black font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-3 tracking-tight"
           >
             Built With <span className="text-gray-400">Precision</span>
           </h2>
@@ -189,7 +189,7 @@ export default function Technologies() {
           ref={iconsContainerRef}
           className="flex justify-center"
         >
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 md:gap-4 w-full max-w-4xl mx-auto">
+          <div className="flex items-center flex-wrap justify-center gap-3 md:gap-4 w-full max-w-6xl mx-auto">
             {technologies.map((tech, index) => {
               const IconComponent = tech.icon;
               const isLastRow = index >= technologies.length - 6;
@@ -200,7 +200,7 @@ export default function Technologies() {
                   ref={el => iconRefs.current[index] = el}
                   className={`
                     flex flex-col items-center justify-center group p-3 
-                    rounded-xl bg-white border border-transparent 
+                    rounded-xl    w-[120px]
                     transition-all duration-300 hover:duration-200
                     hover:border-gray-200 hover:bg-gradient-to-b hover:from-white hover:to-gray-50/80 
                     hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.15)] 
@@ -214,7 +214,7 @@ export default function Technologies() {
                 >
                   {/* Icon */}
                   <div className={`
-                    text-3xl md:text-4xl ${tech.color} 
+                    text-4xl md:text-5xl ${tech.color} 
                     transition-all duration-300
                     ${isLastRow
                       ? 'group-hover:scale-110 group-hover:rotate-3'
@@ -226,7 +226,7 @@ export default function Technologies() {
 
                   {/* Name - Enhanced hover effect */}
                   <span className={`
-                    text-gray-400 text-[10px] sm:text-[11px] mt-2 
+                    text-gray-400 text-[12px]  mt-2 
                     font-manrope font-medium text-center 
                     transition-all duration-300 
                     ${isLastRow
@@ -238,10 +238,7 @@ export default function Technologies() {
                     {tech.name}
                   </span>
 
-                  {/* Subtle glow effect on hover */}
-                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/50 to-transparent rounded-xl"></div>
-                  </div>
+               
                 </div>
               );
             })}

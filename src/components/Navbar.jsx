@@ -29,12 +29,31 @@ const Navbar = () => {
   // Timeout ref for hover delay
   const hoverTimeoutRef = useRef(null);
 
-  // Check if a link is active
+  // Check if a link is active - FIXED to prevent multiple active classes
   const isActive = (href) => {
+    // Handle home page
     if (href === '/') {
       return pathname === href;
     }
-    return pathname?.startsWith(href);
+    
+    // For parent routes (like /services, /industries, /blogs)
+    // Only mark as active if on exact parent route, not on child routes
+    const parentRoutes = ['/services', '/industries', '/blogs'];
+    if (parentRoutes.includes(href)) {
+      return pathname === href;
+    }
+    
+    // For child routes (like /services/software-development)
+    // Check if the current pathname exactly matches the href
+    return pathname === href;
+  };
+
+  // Check if a parent route should be highlighted when on a child route
+  // This is for visual indication in dropdown menus
+  const isParentRouteActive = (parentHref) => {
+    // Only return true if we're on a child route of this parent
+    // and NOT on the parent route itself
+    return pathname?.startsWith(parentHref + '/') && pathname !== parentHref;
   };
 
   // Function to handle navigation with scrolling to specific service
@@ -47,6 +66,16 @@ const Navbar = () => {
     // Close any open dropdowns
     setActiveDropdown(null);
 
+    // Clear mobile expanded state
+    setMobileExpanded({});
+
+    // Remove all underline hover effects
+    Object.keys(underlineRefs.current).forEach(key => {
+      if (underlineRefs.current[key]) {
+        gsap.set(underlineRefs.current[key], { scaleX: 0 });
+      }
+    });
+
     // Create a URL-friendly ID from the service title
     const serviceId = serviceTitle.toLowerCase()
       .replace(/[&]/g, 'and')
@@ -55,48 +84,53 @@ const Navbar = () => {
 
     // If we're already on the services page, just scroll
     if (pathname === '/services') {
-
-      setTimeout(() => {
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
         scrollToService(serviceId);
-      }, 100);
+      });
     } else {
-
-      navigate(`/services#${serviceId}`);
+      // Navigate to services page with hash
+      navigate(`/services#${serviceId}`, { replace: true });
     }
   };
 
   // Function to scroll to a specific service
   const scrollToService = (serviceId) => {
+    // First, try to find the element
+    const findAndScrollToElement = () => {
+      const element = document.getElementById(serviceId);
+      if (element) {
+        const yOffset = -100; // Offset for fixed navbar
+        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+        
+        window.scrollTo({ 
+          top: y, 
+          behavior: 'smooth' 
+        });
 
-    const element = document.getElementById(serviceId);
-    if (element) {
+        // Highlight the element temporarily
+        element.style.transition = 'all 0.3s ease';
+        element.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1), 0 0 0 4px rgba(59,130,246,0.5)';
+        setTimeout(() => {
+          element.style.boxShadow = '';
+        }, 2000);
+        
+        return true;
+      }
+      return false;
+    };
 
-      const yOffset = -100; // Offset for fixed navbar
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-      window.scrollTo({ top: y, behavior: 'smooth' });
-
-      // Highlight the element temporarily
-      element.style.transition = 'all 0.3s ease';
-      element.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1), 0 0 0 4px rgba(59,130,246,0.5)';
-      setTimeout(() => {
-        element.style.boxShadow = '';
-      }, 2000);
-    } else {
-      setTimeout(() => {
-        const retryElement = document.getElementById(serviceId);
-        if (retryElement) {
-          const yOffset = -100;
-          const y = retryElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-
-          retryElement.style.transition = 'all 0.3s ease';
-          retryElement.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.1), 0 0 0 4px rgba(59,130,246,0.5)';
-          setTimeout(() => {
-            retryElement.style.boxShadow = '';
-          }, 2000);
+    // Try immediately
+    if (!findAndScrollToElement()) {
+      // If not found, wait a bit and try again (for dynamic content)
+      let attempts = 0;
+      const maxAttempts = 10;
+      const interval = setInterval(() => {
+        attempts++;
+        if (findAndScrollToElement() || attempts >= maxAttempts) {
+          clearInterval(interval);
         }
-      }, 500);
+      }, 100);
     }
   };
 
@@ -106,15 +140,33 @@ const Navbar = () => {
 
     if (pathname === '/services' && window.location.hash) {
       const serviceId = window.location.hash.replace('#', '');
+      // Wait a bit for the page to fully render
       setTimeout(() => {
         scrollToService(serviceId);
-      }, 500);
+      }, 300);
     }
   }, [pathname, mounted]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Clean up active states when pathname changes
+  useEffect(() => {
+    // Close any open dropdowns
+    setActiveDropdown(null);
+    // Close mobile menu
+    setIsOpen(false);
+    // Clear mobile expanded state
+    setMobileExpanded({});
+    
+    // Remove all underline hover effects
+    Object.keys(underlineRefs.current).forEach(key => {
+      if (underlineRefs.current[key]) {
+        gsap.set(underlineRefs.current[key], { scaleX: 0 });
+      }
+    });
+  }, [pathname]);
 
   // Run animations after mounted
   useEffect(() => {
@@ -350,13 +402,58 @@ const Navbar = () => {
     }, 100);
   };
 
+  // Handle click on regular nav link (non-service)
+  const handleNavLinkClick = (e, href) => {
+    e.preventDefault();
+    
+    // Close mobile menu if open
+    setIsOpen(false);
+    // Close any open dropdowns
+    setActiveDropdown(null);
+    // Clear mobile expanded state
+    setMobileExpanded({});
+    
+    // Remove all underline hover effects
+    Object.keys(underlineRefs.current).forEach(key => {
+      if (underlineRefs.current[key]) {
+        gsap.set(underlineRefs.current[key], { scaleX: 0 });
+      }
+    });
+    
+    // Navigate to the href
+    navigate(href);
+  };
+
   // Handle click on dropdown link
   const handleDropdownLinkClick = (e, href, serviceTitle) => {
-    handleUnderlineHover(`${activeDropdown}-desktop`, false);
+    e.preventDefault(); // Prevent default to handle manually
+    
+    // Remove underline hover effects for the current dropdown
+    if (activeDropdown) {
+      handleUnderlineHover(`${activeDropdown}-desktop`, false);
+    }
+    
+    // Close dropdown
     setActiveDropdown(null);
+    
+    // Close mobile menu if open
+    setIsOpen(false);
+    
+    // Clear mobile expanded state
+    setMobileExpanded({});
+    
+    // Remove all underline hover effects
+    Object.keys(underlineRefs.current).forEach(key => {
+      if (underlineRefs.current[key]) {
+        gsap.set(underlineRefs.current[key], { scaleX: 0 });
+      }
+    });
 
     if (serviceTitle) {
       handleServiceNavigation(e, href, serviceTitle);
+    } else {
+      // For non-service dropdown items (like Industries)
+      navigate(href);
     }
   };
 
@@ -373,7 +470,6 @@ const Navbar = () => {
     {
       title: "About",
       href: "/about",
-
     },
     {
       title: "Services",
@@ -384,19 +480,16 @@ const Navbar = () => {
         { title: "Mobile App Development", href: "/services/mobile-app-development", category: "Development" },
         { title: "API & Systems Integration", href: "/services/api-systems-integration", category: "Development" },
         { title: "AI & Machine Learning", href: "/services/ai-machine-learning", category: "Development" },
-
         { title: "Cloud Architecture", href: "/services/cloud-architecture", category: "Cloud & Infrastructure" },
         { title: "DevOps & Automation", href: "/services/devops-automation", category: "Cloud & Infrastructure" },
         { title: "Cloud Workspace Management", href: "/services/cloud-workspace-management", category: "Cloud & Infrastructure" },
         { title: "Managed IT Services", href: "/services/managed-it-services", category: "Cloud & Infrastructure" },
         { title: "Database Architecture", href: "/services/database-architecture", category: "Cloud & Infrastructure" },
-
         { title: "UI/UX Design", href: "/services/ui-ux-design", category: "Design & Marketing" },
         { title: "Social Media Management", href: "/services/social-media-management", category: "Design & Marketing" },
         { title: "SEO & Growth Strategy", href: "/services/seo-growth-strategy", category: "Design & Marketing" },
         { title: "Digital Marketing", href: "/services/digital-marketing", category: "Design & Marketing" },
         { title: "Content Writing", href: "/services/content-writing", category: "Design & Marketing" },
-
         { title: "E-Commerce Solutions", href: "/services/ecommerce-solutions", category: "Business Solutions" },
         { title: "Business Process Outsourcing", href: "/services/business-process-outsourcing", category: "Business Solutions" }
       ]
@@ -469,6 +562,7 @@ const Navbar = () => {
           <div className="hidden lg:flex lg:items-center lg:space-x-1 gap-5">
             {navItems.map((item, index) => {
               const active = isActive(item.href);
+              const isParentActive = item.dropdown ? isParentRouteActive(item.href) : false;
 
               return (
                 <div
@@ -484,9 +578,10 @@ const Navbar = () => {
                     <div className="flex items-center">
                       <Link
                         to={item.href}
-                        className={`py-2 text-sm font-medium relative group font-manrope ${active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
-                          }`}
-                        onClick={() => handleDropdownLinkClick()}
+                        className={`py-2 text-sm font-medium relative group font-manrope ${
+                          active ? 'text-gray-900' : isParentActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                        onClick={(e) => handleNavLinkClick(e, item.href)}
                       >
                         {item.title}
                       </Link>
@@ -495,9 +590,9 @@ const Navbar = () => {
                         onMouseEnter={() => handleNavItemEnter(item.title)}
                       >
                         <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${active ? 'text-gray-900' : 'text-gray-600'
-                            } ${activeDropdown === item.title ? "rotate-180" : ""
-                            }`}
+                          className={`w-4 h-4 transition-transform duration-300 ${
+                            active ? 'text-gray-900' : isParentActive ? 'text-gray-900' : 'text-gray-600'
+                          } ${activeDropdown === item.title ? "rotate-180" : ""}`}
                         />
                       </button>
 
@@ -505,19 +600,21 @@ const Navbar = () => {
                       <span
                         ref={el => underlineRefs.current[`${item.title}-desktop`] = el}
                         className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 transform scale-x-0"
-                        style={{ display: active ? 'none' : 'block' }}
+                        style={{ display: (active || isParentActive) ? 'none' : 'block' }}
                       ></span>
 
                       {/* Active indicator for items with dropdown */}
-                      {active && (
+                      {(active || isParentActive) && (
                         <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900"></span>
                       )}
                     </div>
                   ) : (
                     <Link
                       to={item.href}
-                      className={`relative px-0 py-2 text-sm font-medium group inline-block font-manrope ${active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
-                        }`}
+                      className={`relative px-0 py-2 text-sm font-medium group inline-block font-manrope ${
+                        active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      onClick={(e) => handleNavLinkClick(e, item.href)}
                       onMouseEnter={() => {
                         if (window.innerWidth >= 1024 && !active) {
                           handleUnderlineHover(`${item.title}-desktop`, true);
@@ -557,7 +654,7 @@ const Navbar = () => {
                                 </h3>
                                 <div className="flex flex-col space-y-1">
                                   {services.map((service) => {
-                                    const isServiceActive = isActive(service.href);
+                                    const isServiceActive = pathname === service.href; // Exact match only
                                     return (
                                       <Link
                                         key={service.title}
@@ -565,14 +662,17 @@ const Navbar = () => {
                                         className="group/link dropdown-item"
                                         onClick={(e) => handleDropdownLinkClick(e, service.href, service.title)}
                                       >
-                                        <div className={`flex items-center justify-between py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${isServiceActive ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                        <div className={`flex items-center justify-between py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${
+                                          isServiceActive ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                        }`}>
+                                          <span className={`text-sm font-instrument ${
+                                            isServiceActive ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover/link:text-gray-900'
                                           }`}>
-                                          <span className={`text-sm font-instrument ${isServiceActive ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover/link:text-gray-900'
-                                            }`}>
                                             {service.title}
                                           </span>
-                                          <ArrowRight className={`w-3 h-3 flex-shrink-0 transition-opacity duration-300 ${isServiceActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover/link:opacity-100'
-                                            }`} />
+                                          <ArrowRight className={`w-3 h-3 flex-shrink-0 transition-opacity duration-300 ${
+                                            isServiceActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover/link:opacity-100'
+                                          }`} />
                                         </div>
                                       </Link>
                                     );
@@ -584,22 +684,25 @@ const Navbar = () => {
                         ) : item.title === "Industries" ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6">
                             {item.dropdown.map((industry) => {
-                              const isIndustryActive = isActive(industry.href);
+                              const isIndustryActive = pathname === industry.href; // Exact match only
                               return (
                                 <Link
                                   key={industry.title}
                                   to={industry.href}
                                   className="group dropdown-item"
-                                  onClick={() => handleDropdownLinkClick()}
+                                  onClick={(e) => handleDropdownLinkClick(e, industry.href)}
                                 >
-                                  <div className={`flex items-center justify-between py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${isIndustryActive ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                  <div className={`flex items-center justify-between py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${
+                                    isIndustryActive ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                  }`}>
+                                    <span className={`text-sm font-instrument ${
+                                      isIndustryActive ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'
                                     }`}>
-                                    <span className={`text-sm font-instrument ${isIndustryActive ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'
-                                      }`}>
                                       {industry.title}
                                     </span>
-                                    <ArrowRight className={`w-3 h-3 flex-shrink-0 transition-opacity duration-300 ${isIndustryActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover:opacity-100'
-                                      }`} />
+                                    <ArrowRight className={`w-3 h-3 flex-shrink-0 transition-opacity duration-300 ${
+                                      isIndustryActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover:opacity-100'
+                                    }`} />
                                   </div>
                                 </Link>
                               );
@@ -608,31 +711,35 @@ const Navbar = () => {
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6">
                             {item.dropdown.map((dropItem) => {
-                              const isDropItemActive = isActive(dropItem.href);
+                              const isDropItemActive = pathname === dropItem.href; // Exact match only
                               return (
                                 <Link
                                   key={dropItem.title}
                                   to={dropItem.href}
                                   className="group dropdown-item"
-                                  onClick={() => handleDropdownLinkClick()}
+                                  onClick={(e) => handleDropdownLinkClick(e, dropItem.href)}
                                 >
-                                  <div className={`py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${isDropItemActive ? 'bg-gray-50' : 'hover:bg-gray-50'
-                                    }`}>
+                                  <div className={`py-1.5 px-2 -mx-2 rounded-sm transition-all duration-300 ${
+                                    isDropItemActive ? 'bg-gray-50' : 'hover:bg-gray-50'
+                                  }`}>
                                     <div className="flex justify-between items-start">
                                       <div>
-                                        <div className={`text-sm font-instrument ${isDropItemActive ? 'text-gray-900 font-medium' : 'text-gray-900 group-hover:text-gray-700'
-                                          }`}>
+                                        <div className={`text-sm font-instrument ${
+                                          isDropItemActive ? 'text-gray-900 font-medium' : 'text-gray-900 group-hover:text-gray-700'
+                                        }`}>
                                           {dropItem.title}
                                         </div>
                                         {dropItem.description && (
-                                          <div className={`text-xs font-instrument ${isDropItemActive ? 'text-gray-600' : 'text-gray-500'
-                                            }`}>
+                                          <div className={`text-xs font-instrument ${
+                                            isDropItemActive ? 'text-gray-600' : 'text-gray-500'
+                                          }`}>
                                             {dropItem.description}
                                           </div>
                                         )}
                                       </div>
-                                      <ArrowRight className={`w-4 h-4 flex-shrink-0 ml-2 mt-0.5 transition-opacity duration-300 ${isDropItemActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover:opacity-100'
-                                        }`} />
+                                      <ArrowRight className={`w-4 h-4 flex-shrink-0 ml-2 mt-0.5 transition-opacity duration-300 ${
+                                        isDropItemActive ? 'opacity-100 text-gray-900' : 'text-gray-400 opacity-0 group-hover:opacity-100'
+                                      }`} />
                                     </div>
                                   </div>
                                 </Link>
@@ -653,6 +760,7 @@ const Navbar = () => {
             <Link
               to="/contact"
               className="relative group inline-flex items-center space-x-2 bg-gray-900 text-white px-6 py-2.5 rounded-lg text-sm font-medium overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-gray-900/20 font-manrope"
+              onClick={(e) => handleNavLinkClick(e, "/contact")}
               onMouseEnter={() => handleUnderlineHover('cta', true)}
               onMouseLeave={() => handleUnderlineHover('cta', false)}
             >
@@ -683,6 +791,7 @@ const Navbar = () => {
           <div className="px-4 py-6 max-h-[80vh] overflow-y-auto">
             {navItems.map((item) => {
               const active = isActive(item.href);
+              const isParentActive = item.dropdown ? isParentRouteActive(item.href) : false;
 
               return (
                 <div key={item.title} className="mb-3">
@@ -692,11 +801,12 @@ const Navbar = () => {
                       <div className="flex items-center justify-between">
                         <Link
                           to={item.href}
-                          className={`py-3 px-0 text-sm font-medium transition-all duration-300 font-manrope ${active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
-                            }`}
-                          onClick={() => {
-                            setIsOpen(false);
-                            setMobileExpanded({});
+                          className={`py-3 px-0 text-sm font-medium transition-all duration-300 font-manrope ${
+                            active ? 'text-gray-900' : isParentActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleNavLinkClick(e, item.href);
                           }}
                         >
                           {item.title}
@@ -706,9 +816,9 @@ const Navbar = () => {
                           className="p-2"
                         >
                           <ChevronDown
-                            className={`w-4 h-5 transition-all duration-500 ${active ? 'text-gray-900' : 'text-gray-500'
-                              } ${mobileExpanded[item.title] ? "rotate-180" : ""
-                              }`}
+                            className={`w-4 h-5 transition-all duration-500 ${
+                              active ? 'text-gray-900' : isParentActive ? 'text-gray-900' : 'text-gray-500'
+                            } ${mobileExpanded[item.title] ? "rotate-180" : ""}`}
                           />
                         </button>
                       </div>
@@ -721,28 +831,33 @@ const Navbar = () => {
                       >
                         <div className="space-y-1 pt-3 pl-4">
                           {item.dropdown.map((dropItem) => {
-                            const isDropItemActive = isActive(dropItem.href);
+                            const isDropItemActive = pathname === dropItem.href; // Exact match only
                             return (
                               <Link
                                 key={dropItem.title}
                                 to={dropItem.href}
-                                className={`flex items-center justify-between py-2 pl-5 pr-2 text-sm rounded-lg transition-all duration-300 font-instrument ${isDropItemActive
-                                  ? 'text-gray-900 font-medium bg-gray-50'
-                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                                  }`}
+                                className={`flex items-center justify-between py-2 pl-5 pr-2 text-sm rounded-lg transition-all duration-300 font-instrument ${
+                                  isDropItemActive
+                                    ? 'text-gray-900 font-medium bg-gray-50'
+                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                }`}
                                 onClick={(e) => {
                                   if (item.title === "Services") {
                                     e.preventDefault();
                                     handleServiceNavigation(e, dropItem.href, dropItem.title);
                                   } else {
+                                    e.preventDefault();
                                     setIsOpen(false);
                                     setMobileExpanded({});
+                                    setActiveDropdown(null);
+                                    navigate(dropItem.href);
                                   }
                                 }}
                               >
                                 <span>{dropItem.title}</span>
-                                <ArrowRight className={`w-3 h-4 transition-transform duration-300 flex-shrink-0 ${isDropItemActive ? 'opacity-100 text-gray-900' : 'text-gray-400 group-hover:translate-x-1'
-                                  }`} />
+                                <ArrowRight className={`w-3 h-4 transition-transform duration-300 flex-shrink-0 ${
+                                  isDropItemActive ? 'opacity-100 text-gray-900' : 'text-gray-400 group-hover:translate-x-1'
+                                }`} />
                               </Link>
                             );
                           })}
@@ -752,9 +867,13 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to={item.href}
-                      className={`relative block py-3 px-0 text-sm font-medium transition-all duration-300 font-manrope w-full ${active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      onClick={() => setIsOpen(false)}
+                      className={`relative block py-3 px-0 text-sm font-medium transition-all duration-300 font-manrope w-full ${
+                        active ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavLinkClick(e, item.href);
+                      }}
                     >
                       {item.title}
                     </Link>
@@ -768,7 +887,10 @@ const Navbar = () => {
               <Link
                 to="/contact"
                 className="inline-flex items-center justify-center w-full space-x-2 bg-gray-900 text-white px-6 py-3.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-300 font-manrope"
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavLinkClick(e, "/contact");
+                }}
               >
                 <span>Get Started</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

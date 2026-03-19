@@ -17,7 +17,6 @@ const About = () => {
   const imageRef = useRef(null);
   const badgeRef = useRef(null);
   const ctaRef = useRef(null);
-  const borderLineRef = useRef(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     if (!mounted) return;
@@ -81,7 +80,7 @@ const About = () => {
             duration: 1.4,
             ease: "power3.out"
           },
-          "-=0.6"
+        "-=0.4"
         );
       }
 
@@ -89,8 +88,8 @@ const About = () => {
       if (descriptionRef.current) {
         tl.fromTo(descriptionRef.current,
           { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-          "-=0.6"
+          { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+         "-=0.4"
         );
       }
 
@@ -102,7 +101,7 @@ const About = () => {
           {
             scale: 1,
             opacity: 1,
-            duration: 0.7,
+            duration: 0.4,
             stagger: 0.15,
             ease: "back.out(1.4)"
           },
@@ -110,14 +109,7 @@ const About = () => {
         );
       }
 
-      // Border line animation
-      if (borderLineRef.current) {
-        tl.fromTo(borderLineRef.current,
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 1, ease: "power3.out" },
-          "-=0.2"
-        );
-      }
+   
 
       // CTA button animation
       if (ctaRef.current) {
@@ -300,11 +292,6 @@ const About = () => {
               </div>
             </div>
 
-            {/* Divider Line */}
-            <div
-              ref={borderLineRef}
-              className="w-full h-px bg-gray-200 transform origin-left"
-            ></div>
 
             {/* CTA with animation */}
             <div ref={ctaRef} className="pt-2">

@@ -161,7 +161,7 @@ export default function IndustriesPage() {
                 overlayColor="bg-white"
             />
 
-            <section ref={sectionRef} className="-mt-16 pb-24 px-4 md:px-6 lg:px-8">
+            <section ref={sectionRef} className=" py-16 px-4 md:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
                         {industries.map((industry, index) => {

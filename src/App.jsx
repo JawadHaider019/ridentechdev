@@ -9,10 +9,12 @@ import BlogDetail from './pages/BlogDetail';
 import Industries from './pages/Industries';
 import IndustryDetail from './pages/IndustryDetail';
 import Admin from './pages/Admin';
+import ScrollToTop from './components/ScrollToTop'; 
 
 function App() {
     return (
         <Router>
+            <ScrollToTop /> 
             <Layout>
                 <Routes>
                     <Route path="/" element={<Home />} />

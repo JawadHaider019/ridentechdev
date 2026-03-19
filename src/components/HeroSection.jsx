@@ -102,7 +102,7 @@ export default function HeroSection1({
     return (
         <section
             ref={sectionRef}
-            className="w-full  h-[75vh] flex items-center justify-center pt-16 px-6 md:px-20 overflow-hidden bg-white"
+            className="w-full h-[60vh] flex items-center justify-center pt-10 px-6  overflow-hidden bg-white"
         >
             {/* Header Only - No Image */}
             <div className="max-w-7xl mx-auto text-center">

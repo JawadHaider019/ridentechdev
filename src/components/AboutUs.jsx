@@ -129,18 +129,16 @@ const AboutUs = () => {
         }, 0.6); // 0.6s delay
       }
 
-      // Image animation with delay
+      // Image animation with delay - NO FLOATING
       if (imageRef.current) {
         masterTl.fromTo(imageRef.current,
           {
             opacity: 0,
             scale: 0.9,
-            rotation: 2
           },
           {
             opacity: 1,
             scale: 1,
-            rotation: 0,
             duration: 1.4,
             ease: "power3.out"
           },
@@ -189,19 +187,6 @@ const AboutUs = () => {
           duration: 0.7,
           ease: "back.out(1.2)"
         }, 2.0); // 2.0s delay
-      }
-
-
-
-      // Subtle floating animation for image (only on desktop, starts after reveal)
-      if (window.innerWidth >= 1024 && imageRef.current) {
-        masterTl.to(imageRef.current, {
-          y: 8,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut"
-        }, "+=0.5");
       }
 
       // Parallax effect for background elements (continuous)
@@ -284,17 +269,18 @@ const AboutUs = () => {
           </div>
 
           {/* Titles with animation */}
-          <h2 ref={titleRef} className="font-manrope text-5xl md:text-6xl text-gray-900 font-bold mb-4 opacity-0">
+          <h2 ref={titleRef} className="font-manrope text-4xl md:text-5xl lg:text-6xl text-gray-900 font-bold mb-4 opacity-0">
             Your Success,
             <span className="relative">
-              Our  <span className="text-gray-400 "> Priority.</span>
+              Our  <span className="text-gray-400">Priority.</span>
             </span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div className="relative order-2 lg:order-1">
-            <div className="relative h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] w-full max-w-[320px] sm:max-w-[450px] md:max-w-[550px] lg:max-w-[600px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 ">
+          {/* Left Side - Image */}
+          <div className="relative order-2 lg:order-1 flex items-center justify-center">
+            <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] lg:max-w-[550px] mx-auto">
               <div
                 ref={imageRef}
                 className="absolute inset-0 w-full h-full shadow-2xl opacity-0"
@@ -313,53 +299,54 @@ const AboutUs = () => {
           </div>
 
           {/* Right Side - Content */}
-          <div className="order-1 lg:order-2 space-y-3 flex flex-col gap-4">
-            {/* Heading with animation */}
-            <p ref={headingRef} className="font-instrument text-lg text-gray-600 leading-relaxed opacity-0">
-              We are dedicated to helping you achieve your goals with intuitive, user-friendly digital solutions. Our commitment to your success drives everything we do and sets us apart.
-            </p>
-
-            {/* Description Text */}
-            <div ref={descriptionRef} className=" opacity-0">
-              <p className="font-instrument text-lg text-gray-600 leading-relaxed">
-                Our approach combines strategic thinking with technical excellence to deliver solutions that not only meet but exceed expectations.
+          <div className="order-1 lg:order-2 flex flex-col justify-between h-full">
+            <div className="space-y-6">
+              {/* Heading with animation */}
+              <p ref={headingRef} className="font-instrument text-lg md:text-xl text-gray-600 leading-relaxed opacity-0">
+                We are dedicated to helping you achieve your goals with intuitive, user-friendly digital solutions. Our commitment to your success drives everything we do and sets us apart.
               </p>
-            </div>
 
-            {/* Features List */}
-            <div className="space-y-4">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  ref={el => featuresRef.current[index] = el}
-                  className="flex items-start space-x-3 cursor-pointer group opacity-0"
-                  style={{ transform: 'translateX(30px)' }}
-                  onMouseEnter={handleFeatureEnter}
-                  onMouseLeave={handleFeatureLeave}
-                >
-                  <div className="feature-icon flex-shrink-0 w-8 h-8 bg-gray-900 text-white rounded-lg flex items-center justify-center transition-all duration-300">
-                    {feature.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-manrope text-lg text-gray-900 mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="font-instrument text-sm text-gray-600 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+              {/* Description Text */}
+              <div ref={descriptionRef} className="opacity-0">
+                <p className="font-instrument text-base md:text-lg text-gray-600 leading-relaxed">
+                  Our approach combines strategic thinking with technical excellence to deliver solutions that not only meet but exceed expectations.
+                </p>
+              </div>
 
+              {/* Features List */}
+              <div className="flex flex-col -mt-8">
+                {features.map((feature, index) => (
+                  <div
+                    key={index}
+                    ref={el => featuresRef.current[index] = el}
+                    className="flex items-start space-x-4 cursor-pointer group opacity-0"
+                    style={{ transform: 'translateX(30px)' }}
+                    onMouseEnter={handleFeatureEnter}
+                    onMouseLeave={handleFeatureLeave}
+                  >
+                    <div className="feature-icon flex-shrink-0 w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center transition-all duration-300">
+                      {feature.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-manrope text-base md:text-lg text-gray-900 font-medium mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="font-instrument text-sm md:text-base text-gray-600 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* CTA with animation */}
-            <div ref={ctaRef} className="flex flex-wrap gap-4 opacity-0">
+            <div ref={ctaRef} className="mt-8 pt-4 opacity-0">
               <Link
                 to="/contact"
                 className="group inline-flex items-center space-x-2 bg-gray-900 text-white px-8 py-4 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-300 hover:shadow-lg font-manrope"
               >
-                <span>Start Projects</span>
+                <span>Contact Us</span>
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>

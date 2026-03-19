@@ -187,22 +187,12 @@ export default function ContactPage() {
             <HeroSection
                 title="CONTACT US"
                 subtitle="Building a legacy of innovation and trust"
+                
             />
 
             <section ref={sectionRef} className="py-16 md:py-20 px-4 md:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-12">
-                        <h2 ref={titleRef} className="font-marcellus text-3xl md:text-4xl lg:text-5xl text-gray-900 mb-4">
-                            Get in{" "}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600">
-                                Touch
-                            </span>
-                        </h2>
-                        <p ref={subtitleRef} className="font-instrument text-gray-600 max-w-2xl mx-auto">
-                            Have a project in mind? We'd love to hear about it. Fill out the form and we'll get back to you within 24 hours.
-                        </p>
-                    </div>
-
+                    
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                         <div className="lg:col-span-7">
                             <div
