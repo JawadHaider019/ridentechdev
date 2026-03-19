@@ -29,7 +29,6 @@ export default function CTA() {
     e.preventDefault();
     
     if (pathname === '/contact') {
-      // If already on contact page, just scroll to top
       window.scrollTo({
         top: 0,
         left: 0,

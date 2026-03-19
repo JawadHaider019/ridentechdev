@@ -104,7 +104,7 @@ export default function HeroSection1({
             ref={sectionRef}
             className="w-full h-[60vh] flex items-center justify-center pt-10 px-6  overflow-hidden bg-white"
         >
-            {/* Header Only - No Image */}
+
             <div className="max-w-7xl mx-auto text-center">
                 <div className="relative mb-6 flex justify-center">
                     <h1

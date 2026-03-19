@@ -200,18 +200,14 @@ export default function BlogPage() {
                                                
                                             </div>
 
-                                            {/* Title */}
                                             <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
                                                 {post.title}
                                             </h3>
 
-                                            {/* Excerpt */}
                                             <p className="font-instrument text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
                                                 {post.excerpt}
                                             </p>
-
-                                            {/* Author and Read More */}
-                                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-8 h-8 bg-gray-200 rounded-full overflow-hidden">
                                                         <img 

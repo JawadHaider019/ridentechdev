@@ -27,16 +27,14 @@ const ScrollToTop = () => {
         }
       }, 100);
     } else {
-      // No hash, scroll to top immediately
       window.scrollTo({
         top: 0,
         left: 0,
-        behavior: 'instant' // Use 'instant' for no animation, 'smooth' for smooth scrolling
+        behavior: 'instant' 
       });
     }
-  }, [pathname, hash]); // Re-run when pathname or hash changes
-
-  return null; // This component doesn't render anything
+  }, [pathname, hash]); 
+  return null;
 };
 
 export default ScrollToTop;

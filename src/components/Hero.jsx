@@ -195,9 +195,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-
-      {/* Responsive SVG ClipPath Definition */}
-      <svg className="absolute w-0 h-0" aria-hidden="true">
+<svg className="absolute w-0 h-0" aria-hidden="true">
         <defs>
           <clipPath id="heroClipPath" clipPathUnits="objectBoundingBox">
             <path d="M 0.037 0.082 L 0.37 0.082 A 0.037 0.041 0 0 0 0.407 0.041 L 0.407 0.041 A 0.037 0.041 0 0 1 0.444 0 L 0.963 0 A 0.037 0.041 0 0 1 1 0.041 L 1 0.959 A 0.037 0.041 0 0 1 0.963 1 L 0.037 1 A 0.037 0.041 0 0 1 0 0.959 L 0 0.122 A 0.037 0.041 0 0 1 0.037 0.082 Z" />
